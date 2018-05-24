@@ -1,0 +1,79 @@
+{% extends 'gfiles/table_with_filter_right.html' %}
+{% block sb_admin_title %}ISA Summary  {% endblock sb_admin_title %}
+{% block sb_admin_subheading %} <small></small> {% endblock sb_admin_subheading %}
+{% block sb_admin_breadcrumb %} <a href="{% url "index" %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a> {% endblock sb_admin_breadcrumb %}
+{% block sb_admin_breadcrumb_active %} / ISA Summary {% endblock sb_admin_breadcrumb_active %}
+{% block panel_title %}Summary{% endblock panel_title %}
+{% block preamble %}
+
+
+<blockquote class="blockquote-footer">
+  <p class="mb-0">
+      The open source ISA framework and tools help to manage an increasingly diverse set of life science, environmental and biomedical experiments that employing one or a combination of technologies.
+      Built around the 'Investigation' (the project context), 'Study' (a unit of research) and 'Assay' (analytical measurement) data model and serializations (tabular, JSON and RDF), the ISA framework helps you to provide rich description of the experimental metadata (i.e. sample characteristics, technology and measurement types, sample-to-data relationships) so that the resulting data and discoveries are reproducible and reusable.</p>
+  <footer class="blockquote-footer">ISA tools <cite title="Source Title">http://isa-tools.org/</cite></footer>
+</blockquote>
+<hr>
+{% endblock preamble %}
+
+{% block postamble %}
+<hr>
+       <div class="row">
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">ISA Base Operations </h3>
+                </div>
+                <div class="panel-body">
+                   <div class="list-group">
+                       <a href="{% url "icreate" %}" class="list-group-item">Create Investigation</a>
+                       <a href="{% url "screate" %}" class="list-group-item">Create Study</a>
+                       <a href="{% url "acreate" %}" class="list-group-item">Create Assay</a>
+                       <a href="{% url "smcreate" %}" class="list-group-item">Create Sample</a>
+                       <a href="{% url "sfcreate" %}" class="list-group-item">Create Study Factor</a>
+                       <a href="{% url "create_organism" %}" class="list-group-item">Add Organism</a>
+                       <a href="{% url "create_organismpart" %}" class="list-group-item">Add Organism part</a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Protocol creation </h3>
+                </div>
+                <div class="panel-body">
+                   <div class="list-group">
+                       <a href="{% url "cp_create" %}" class="list-group-item">Chromatography Protocol</a>
+                       <a href="{% url "cpt_create" %}" class="list-group-item">Chromatography Type</a>
+                       <a href="{% url "mp_create" %}" class="list-group-item">Measurement Protocol</a>
+                       <a href="{% url "mpt_create" %}" class="list-group-item">Measurement Type (techinique)</a>
+                       <a href="{% url "ep_create" %}" class="list-group-item">Extraction (liquid) Protocol</a>
+                       <a href="{% url "ept_create" %}" class="list-group-item">Extraction (liquid) Type</a>
+                       <a href="{% url "sp_create" %}" class="list-group-item">Solid Phase Extraction (SPE) Protocol</a>
+                       <a href="{% url "spt_create" %}" class="list-group-item">Solid Phase Extraction (SPE) Type</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Ontology Creation </h3>
+                </div>
+                <div class="panel-body">
+                   <div class="list-group">
+                       <a href="{% url "create_ontologyterm" %}" class="list-group-item">Create an Ontology Term (manual)</a>
+                       <a href="{% url "search_ontologyterm" %}" class="list-group-item">Create an Ontology Term (auto)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+ <li>
+
+{% endblock postamble %}

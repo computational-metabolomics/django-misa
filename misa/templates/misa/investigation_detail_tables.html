@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block sb_admin_title %}ISA Project Details{% endblock sb_admin_title %}
+{% block sb_admin_subheading %} <small></small> {% endblock sb_admin_subheading %}
+{% block sb_admin_breadcrumb %}
+    <a href="{% url "index" %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+    /
+    <a href="{% url "ilist" %}"></i> ISA Summary </a>
+
+{% endblock sb_admin_breadcrumb %}
+{% block sb_admin_breadcrumb_active %} / ISA Project Details {% endblock sb_admin_breadcrumb_active %}
+
+{% block sb_admin_custom_js %}
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="{% static 'gfiles/show_hide_filters.js' %}"></script>
+    <script src="{% static 'gfiles/table_check.js' %}"></script>
+    <script type="text/javascript" src="{% static "django_tables2_column_shifter/js/django_tables2_column_shifter.min.js" %}"></script>
+{% endblock sb_admin_custom_js %}
+
+
+{% block content %}
+    {% load render_table from django_tables2 %}
+    {% load querystring from django_tables2 %}
+    {% load bootstrap3 %}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><b>Investigation - </b> <span class="text-muted"> {{ investigation.name }}</span></h3>
+                </div>
+                <div class="panel-body">
+                    <p>id: {{ investigation.pk }}</p>
+                    <p>{{ investigation.description |safe }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form name="filterform"  action="" method="get" class="form form-inline">
+    {% for s, table, filter in list %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><b>Study - </b>  <span class="text-muted"> {{ s.name }}</span></h3>
+                    </div>
+                    <div class="panel-body">
+
+
+                            <p>id: {{s.pk}}</p>
+                            <p>name: {{ s.name }}</p>
+                            <p>{{ s.description |safe }}</p>
+
+                            {% if s.dmastudy %}
+                                <p>Type of study: DMA</p>
+                            {% else %}
+                                <p>Type of study: metabolomics</p>
+                            {% endif %}
+                        <div class="row" >
+
+                            <div class="col-lg-8">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title"><b>Assays</b></h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        {% render_table table %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Filter</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <p><button type="submit" href="#1" id="clear_selection" onclick="return show_filter_c({{forloop.counter0 }});">Show filter</button></p>
+                                        <div id="filters{{forloop.counter0 }}" style="display:none;">
+                                            {% bootstrap_form filter.form layout='inline' %}
+                                            {% bootstrap_button 'filter' %}
+
+                                        <p><button type="submit" id="upbutton" onclick="return hide_filter_c({{forloop.counter0 }});">Hide</button></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% endfor %}
+{% endblock %}
