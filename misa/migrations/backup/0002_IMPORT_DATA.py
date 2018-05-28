@@ -22,13 +22,6 @@ def forwards_func(apps, schema_editor):
     ChromatographyProtocol = apps.get_model("misa", "ChromatographyProtocol")
     MeasurementProtocol = apps.get_model("misa", "MeasurementProtocol")
 
-    OntologyTerm = apps.get_model("misa", "OntologyTerm")
-
-    ontologyinput = ''
-
-
-
-
     sample_class_input = ['ANIMAL', 'BLANK', 'COMPOUND']
     m_input = ['DI-MS', 'DI-MSn', 'LC-MS', 'LC-MSMS']
     p_input = ['POSITIVE', 'NEGATIVE', 'NA']

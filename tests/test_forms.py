@@ -3,16 +3,18 @@ from __future__ import unicode_literals
 
 from django.core.files import File
 from django.test import TestCase
+from django.contrib.auth.models import AnonymousUser, User
 
-from metab.models.models import MFile
+from metab.models import MFile
 
 from misa.models import PolarityType
 from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol
 from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, MeasurementProcess
 from misa.models import StudySample, Assay, AssayDetail, AssayRun
-from misa.utils.isa_upload import upload_assay_data_files
+from misa.utils.isa_upload import upload_assay_data_files_zip
 from misa.forms import AssayDetailForm, UploadAssayDataFilesForm
 from init_setup import upload_assay_data_form_setup
+
 import os
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -67,37 +69,36 @@ class AssayDetailFormTestCase(TestCase):
         self.assertIs(len(AssayDetail.objects.all()), 7)
 
 
-class UploadAssayDataFilesFormTestCase(TestCase):
-    def setUp(self):
-        upload_assay_data_form_setup(self)
-
-    def test_upload_assay_data_files(self):
-        """
-        Test to check unit testing running
-        """
-        # Using a model form as a validator that is not a HTTP request (as per page 165 of Two Scoops of Django 1.11
-        data_zipfile_pth = os.path.join(os.path.dirname(__file__), 'data', 'DUMMY_P_WAX1_PHE.zip')
-        data_zipfile = SimpleUploadedFile('DUMMY_P_WAX1_PHE.zip', open(data_zipfile_pth, 'r').read())
-        data_mapping_file = os.path.join(os.path.dirname(__file__), 'data', 'mapping_file.csv')
-
-        form = UploadAssayDataFilesForm({},
-                                        {
-                                         'data_zipfile': data_zipfile,
-                                         'data_mappingfile': File(open(data_mapping_file), 'r')
-                                         },
-                                        assayid=self.assay.id)
-
-        print 'is form valid?', form.is_valid()
-        print form
-        # self.assertTrue(form.is_valid())
-        # form.save()
-
-        data_zipfile = form.cleaned_data['data_zipfile']
-        data_mappingfile = form.cleaned_data['data_mappingfile']
-        assayid = self.assay.id
-        upload_assay_data_files(assayid, data_zipfile, data_mappingfile)
-
-        self.assertIs(len(MFile.objects.all()), 14)
-        self.assertIs(len(AssayRun.objects.all()), 12)
-
-
+# class UploadAssayDataFilesFormTestCase(TestCase):
+#     def setUp(self):
+#         upload_assay_data_form_setup(self)
+#         self.user = User.objects.create_user(
+#             username='jacob', email='jacob@…', password='top_secret')
+#
+#     def test_upload_assay_data_files(self):
+#         """
+#         Test to check unit testing running
+#         """
+#         # Using a model form as a validator that is not a HTTP request (as per page 165 of Two Scoops of Django 1.11
+#         data_zipfile_pth = os.path.join(os.path.dirname(__file__), 'data', 'DUMMY_P_WAX1_PHE.zip')
+#         data_zipfile = SimpleUploadedFile('DUMMY_P_WAX1_PHE.zip', open(data_zipfile_pth, 'r').read())
+#         data_mapping_file = os.path.join(os.path.dirname(__file__), 'data', 'mapping_file.csv')
+#
+#         files_in = {'data_zipfile': data_zipfile,
+#                     'data_mappingfile': File(open(data_mapping_file), 'r')}
+#
+#         form = UploadAssayDataFilesForm(self.user, {}, files_in,  assayid=self.assay.id)
+#
+#
+#         print 'is form valid?', form.valid()
+#
+#         # self.assertTrue(form.is_valid())
+#         # form.save()
+#
+#         data_zipfile = form.cleaned_data['data_zipfile']
+#         data_mappingfile = form.cleaned_data['data_mappingfile']
+#         assayid = self.assay.id
+#         upload_assay_data_files_zip(assayid, data_zipfile, data_mappingfile, self.user, True)
+#
+#         self.assertIs(len(MFile.objects.all()), 14)
+#         self.assertIs(len(AssayRun.objects.all()), 12)

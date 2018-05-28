@@ -37,7 +37,7 @@ ONTOLOGY_ADD_HELP = mark_safe("If the ontology term is not available, please "
 
 class Organism(models.Model):
     # need to update with proper ontologies
-    ontologyterm = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE,
+    ontologyterm = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True,
                                      help_text=ONTOLOGY_ADD_HELP)
     name = models.TextField(blank=True)
 
@@ -52,7 +52,7 @@ class Organism(models.Model):
 
 class OrganismPart(models.Model):
     # need to update with proper ontologies
-    ontologyterm = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE,
+    ontologyterm = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True,
                                      help_text=ONTOLOGY_ADD_HELP)
 
     name = models.TextField(blank=True)
@@ -109,8 +109,8 @@ class Study(models.Model):
     title = models.CharField(max_length=100, blank=True, null=True)
     grant_number = models.CharField(max_length=100, blank=True, null=True)
     funding_agency = models.CharField(max_length=100, blank=True, null=True)
-    submission_date = models.DateTimeField(blank=True)
-    public_release_date = models.DateTimeField(blank=True)
+    submission_date = models.DateTimeField(blank=True, null=True)
+    public_release_date = models.DateTimeField(blank=True, null=True)
 
     study_design_descriptors = models.ManyToManyField(OntologyTerm,
                                                       help_text=mark_safe("Any ontological terms that can describe or 'tag' the study"
@@ -125,18 +125,18 @@ class Study(models.Model):
 
 
 class StudyFactor(models.Model):
-    ontologyterm_type = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE,
+    ontologyterm_type = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True,
                                           help_text=mark_safe("The type for the value e.g. gene knockout, concentration unit, etc"
                                                               " If the ontology term is not available please "
                                                               " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
                                                                verbose_name='Ontology Term (type)',
-                                          null=True, blank=True, related_name='ontologyterm_type')
-    ontologyterm_value = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE,
+                                          related_name='ontologyterm_type')
+    ontologyterm_value = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True,
                                                       help_text=mark_safe("The value, e.g. if  wild type, 5 Mol, etc "
                                                                 "If the ontology term is not available please "
                                                                " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
                                                     verbose_name='Ontology Term (value)',
-                                           null=True, blank=True, related_name='ontologyterm_value')
+                                           related_name='ontologyterm_value')
 
     value = models.CharField(max_length=100, blank=True, null=True,
                             help_text='If no appropiate ontological term for the value, then add free text here')
@@ -223,7 +223,7 @@ class ChromatographyType(models.Model):
 
 class SpeType(models.Model):
     type = models.CharField(unique=True, max_length=30)
-    ontologyterm = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True)
+    ontologyterm = models.ManyToManyField(OntologyTerm)
 
     def __str__(self):              # __unicode__ on Python 2
         return self.type

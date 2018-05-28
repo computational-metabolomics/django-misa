@@ -5,7 +5,7 @@ from misa.models import PolarityType
 from misa.models import StudySample, AssayDetail
 from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol
 from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, MeasurementProcess
-from dma.utils import save_model_list
+
 
 from init_setup import protocol_setup
 

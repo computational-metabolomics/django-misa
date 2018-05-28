@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from dma.utils import save_model_list
+# from dma.utils import save_model_list
 
-from metab.models.models import MFileSuffix
+from metab.models import MFileSuffix
 
 from misa.models import ChromatographyType, SpeType, ExtractionType, MeasurementTechnique, SampleType, PolarityType
 from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol
@@ -11,61 +11,16 @@ from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, Me
 from misa.models import Investigation, Study, StudySample, Assay
 from misa.forms import AssayDetailForm
 
+def save_model_list(l):
+    [i.save() for i in l]
+
 def protocol_setup(self):
-    mfs = MFileSuffix(suffix='.mzml')
-    mfs.save()
-    mfr = MFileSuffix(suffix='.raw')
-    mfr.save()
-
-    sample_class_input = ['ANIMAL', 'BLANK', 'COMPOUND']
-    sampletypes = [SampleType.objects.create(type=i) for i in sample_class_input]
-
-    m_input = ['DI-MS', 'DI-MSn', 'LC-MS', 'LC-MSMS']
-    measurement_techniques = [MeasurementTechnique.objects.create(type=i) for i in m_input]
-
-    p_input = ['POSITIVE', 'NEGATIVE', 'NA']
-    polaritietypes = [PolarityType.objects.create(type=i) for i in p_input]
-
-    extraction_input = ['AP', 'P']
-    extractiontypes = [ExtractionType.objects.create(type=e) for e in extraction_input]
-
-    spe_input = ['WAX', 'WCX', 'C18']
-    spetypes = [SpeType.objects.create(type=e) for e in spe_input]
-
-    lc_input = ['PHE', 'C30', 'C18']
-    chromtypes = [ChromatographyType.objects.create(type=e) for e in lc_input]
-
     self.investigation = Investigation()
     self.investigation.save()
     self.study = Study(investigation=self.investigation, dmastudy=True)
     self.study.save()
 
-    save_model_list(extractiontypes)
-    save_model_list(spetypes)
-    save_model_list(chromtypes)
-    save_model_list(measurement_techniques)
-    save_model_list(sampletypes)
-    save_model_list(polaritietypes)
-
-    # Create extraction protocol
-    # extraction_protocols = [ExtractionProtocol(extractiontype=e, code_field='{}-1'.format(e)) in extractiontypes]
-    for e in extractiontypes:
-        p = ExtractionProtocol(extractiontype=e, code_field='{}'.format(e))
-        p.save()
-
-    # Create SPE protocol
-    for e in spetypes:
-        p = SpeProtocol(spetype=e, code_field='{}'.format(e))
-        p.save()
-
-    # Create SPE protocol
-    for e in chromtypes:
-        p = ChromatographyProtocol(chromatographytype=e, code_field='{}'.format(e))
-        p.save()
-
-    for e in measurement_techniques:
-        p = MeasurementProtocol(measurementtechnique=e, code_field='{}'.format(e))
-        p.save()
+    sampletypes = SampleType.objects.all()
 
     sample1 = StudySample(study=self.study, sample_name='ANIMAL', sampletype=sampletypes[0])
     sample1.save()
