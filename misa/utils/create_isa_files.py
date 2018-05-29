@@ -110,8 +110,8 @@ def create_isa_files(investigation_id):
         itm_s.title = dj_s.name
         itm_s.description = dj_s.description
         itm_s.grant_number = dj_s.grant_number
-        itm_s.public_release_date = dj_s.public_release_date.strftime("%Y-%m-%d")
-        itm_s.submission_date = dj_s.submission_date.strftime("%Y-%m-%d")
+        itm_s.public_release_date = dj_s.public_release_date.strftime("%Y-%m-%d") if dj_s.public_release_date else ''
+        itm_s.submission_date = dj_s.submission_date.strftime("%Y-%m-%d") if dj_s.submission_date else ''
 
 
         itm_i.studies.append(itm_s)
