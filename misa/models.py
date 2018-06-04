@@ -124,6 +124,7 @@ class Study(models.Model):
         unique_together = (("name", "investigation"),)
 
 
+
 class StudyFactor(models.Model):
     ontologyterm_type = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True,
                                           help_text=mark_safe("The type for the value e.g. gene knockout, concentration unit, etc"
