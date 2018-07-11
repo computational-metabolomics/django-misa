@@ -4,7 +4,7 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'gfiles',
-    'metab',
+    'mbrowse',
     'misa',
 
 

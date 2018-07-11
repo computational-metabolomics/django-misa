@@ -1,5 +1,5 @@
 import django_tables2 as tables
-from metab.models import MFile
+from mbrowse.models import MFile
 from misa.models import AssayDetail, Investigation, Assay, OntologyTerm
 from django_tables2_column_shifter.tables import ColumnShiftTable
 from gfiles.models import GenericFile

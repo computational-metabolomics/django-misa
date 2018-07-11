@@ -23,8 +23,8 @@ from misa.models import (
 from misa.utils.isa_upload import check_mapping_details, file_upload_mapping_match
 
 
-from metab.forms import UploadMFilesBatchForm
-from metab.utils.mfile_upload import get_pths_from_field
+from mbrowse.forms import UploadMFilesBatchForm
+from mbrowse.utils.mfile_upload import get_pths_from_field
 from dal import autocomplete
 
 class AssayDetailForm(forms.ModelForm):

@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('gfiles', '0001_initial'),
-        ('metab', '0002_CUSTOM_IMPORT_DATA'),
+        ('mbrowse', '0002_CUSTOM_IMPORT_DATA'),
     ]
 
     operations = [
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('technical_replicate', models.IntegerField(default=1)),
                 ('assaydetail', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='misa.AssayDetail')),
-                ('run', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='metab.Run')),
+                ('run', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='mbrowse.Run')),
             ],
         ),
         migrations.CreateModel(

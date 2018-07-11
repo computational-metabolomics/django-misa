@@ -4,9 +4,9 @@ import os
 from django.contrib.auth.models import User
 from django import forms
 
-from metab.utils.mfile_upload import upload_files_from_zip
-from metab.models import Polarity
-from metab.utils.mfile_upload import add_runs_mfiles_filelist
+from mbrowse.utils.mfile_upload import upload_files_from_zip
+from mbrowse.models import Polarity
+from mbrowse.utils.mfile_upload import add_runs_mfiles_filelist
 
 from misa.models import Study, AssayDetail, AssayRun
 from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol

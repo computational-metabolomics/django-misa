@@ -13,7 +13,7 @@ from django_filters.views import FilterView
 from dal import autocomplete
 
 from gfiles.models import GenericFile
-from metab.models import MFile
+from mbrowse.models import MFile
 
 from misa.models import (
     Investigation,

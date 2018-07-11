@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 # from dma.utils import save_model_list
 
-from metab.models import MFileSuffix
+
 
 from misa.models import ChromatographyType, SpeType, ExtractionType, MeasurementTechnique, SampleType, PolarityType
 from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol

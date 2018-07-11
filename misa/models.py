@@ -6,9 +6,8 @@ from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse_lazy
 from django.db import models
 # from django_mysql.models import Model
-from metab.models import Run
+from mbrowse.models import Run
 from gfiles.models import GenericFile
-from ckeditor.fields import RichTextField
 import os, uuid
 from datetime import datetime
 
@@ -69,7 +68,7 @@ class OrganismPart(models.Model):
 
 class Investigation(models.Model):
     name = models.CharField(max_length=200, unique=True, null=False, blank=False)
-    description = RichTextField(help_text='Investigation description')
+    description =  models.TextField(help_text='Investigation description')
     # json_file = models.FileField(upload_to=json_file_upload, blank=True, null=True, max_length=1000)
 
     def __str__(self):              # __unicode__ on Python 2
@@ -103,7 +102,7 @@ class MISAFile(GenericFile):
 
 class Study(models.Model):
     investigation = models.ForeignKey(Investigation, on_delete=models.CASCADE)
-    description = RichTextField(help_text='Study description')
+    description = models.TextField(help_text='Study description')
     dmastudy = models.BooleanField()
     name = models.CharField(max_length=100, blank=False, null=False, help_text='e.g. the study identifier')
     title = models.CharField(max_length=100, blank=True, null=True)
@@ -179,6 +178,11 @@ class StudySample(models.Model):
                                                                                    ' COMPOUND is for chemical standards or non biological samples,'
                                                                                    ' and BLANK is for any samples that represent the blank (e.g. for '
                                                                                    ' blank subtraction)')
+
+    samplecollectionprocess = models.ForeignKey('SampleCollectionProcess', blank=True, null=True,
+                                      help_text="The sample collection process used (will be added automatically)"
+                                     )
+
     def __str__(self):              # __unicode__ on Python 2
         return self.sample_name
 
@@ -286,6 +290,37 @@ class Protocol(models.Model):
         return self.code_field
 
 
+class SampleCollectionProtocol(Protocol):
+    def __str__(self):              # __unicode__ on Python 2
+        return self.code_field
+
+
+class SampleCollectionProcess(models.Model):
+    samplecollectionprocess = models.ForeignKey(SampleCollectionProtocol, on_delete=models.CASCADE)
+    details = models.CharField(max_length=300, null=True, blank=True)
+
+
+class MetaboliteIdentificationProtocol(Protocol):
+    def __str__(self):              # __unicode__ on Python 2
+        return self.code_field
+
+
+class MetaboliteIdentificationProcess(models.Model):
+    metaboliteidentificationprotocol = models.ForeignKey(MetaboliteIdentificationProtocol, on_delete=models.CASCADE)
+    details = models.CharField(max_length=300, null=True, blank=True)
+
+
+class DataTransformationProtocol(Protocol):
+    def __str__(self):              # __unicode__ on Python 2
+        return self.code_field
+
+
+class DataTransformationProcess(models.Model):
+    datatransformationprotocol = models.ForeignKey(DataTransformationProtocol, on_delete=models.CASCADE)
+    details = models.CharField(max_length=300, null=True, blank=True)
+
+
+
 class ExtractionProtocol(Protocol):
     extractiontype = models.ForeignKey(ExtractionType, on_delete=models.CASCADE)
     postextraction = models.CharField(max_length=300)
@@ -346,6 +381,8 @@ class AssayDetail(models.Model):
     speprocess = models.ForeignKey(SpeProcess, on_delete=models.CASCADE)
     chromatographyprocess = models.ForeignKey(ChromatographyProcess, on_delete=models.CASCADE)
     measurementprocess = models.ForeignKey(MeasurementProcess, on_delete=models.CASCADE)
+    datatransformationprocess = models.ForeignKey(DataTransformationProcess, on_delete=models.CASCADE, null=True, blank=True )
+    metaboliteidentifcationprocess = models.ForeignKey(MetaboliteIdentificationProcess, on_delete=models.CASCADE, null=True, blank=True )
 
 
     class Meta:
