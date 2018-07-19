@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-
-from __future__ import unicode_literals
+try:
+    # Python 3
+    from itertools import zip_longest
+except ImportError:
+    # Python 2
+    from itertools import izip_longest as zip_longest
+    
 from django.shortcuts import render
 from django.http.response import HttpResponse
 # Create your views here.

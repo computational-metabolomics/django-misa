@@ -6,7 +6,7 @@ misa
 
 ISA organisation for metabolomic studies with Django
 
-Detailed documentation is in the "docs" directory (todo)
+Further documentation available on `ReadTheDocs <https://mogi.readthedocs.io/en/latest/>`__
 
 Quick start
 -----------
