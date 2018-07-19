@@ -14,7 +14,7 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import TestCase, RequestFactory, Client
 from django.urls import reverse
 
-
+from isatools import model as itm
 from misa.views import InvestigationListView
 
 def add_middleware_to_request(request, middleware_class):
