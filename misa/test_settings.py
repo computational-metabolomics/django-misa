@@ -1,13 +1,18 @@
 import os
 SECRET_KEY = 'fake-key'
 INSTALLED_APPS = [
+    'misa',
+    'mbrowse',
+    'gfiles',
+
+
+    'django_tables2',
+    'django_tables2_column_shifter',
+    'django_filters',
+    'bootstrap3',
+    'django_sb_admin',
     'dal',
     'dal_select2',
-    'gfiles',
-    'mbrowse',
-    'misa',
-
-
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -32,18 +37,20 @@ MIDDLEWARE_CLASSES = [
 
 ]
 
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'test-django-mogi',
+        'NAME': 'test-django-galaxy',
     }
 }
+
 
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # 'djangobower.finders.BowerFinder',
 )
 
 PROJECT_ROOT = os.path.abspath(
@@ -52,23 +59,29 @@ PROJECT_ROOT = os.path.abspath(
 
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
+STATIC_URL = '/static/'
 
-STATIC_URL='/static/'
+ROOT_URLCONF = 'test_site_urls'
 
-EXTERNAL_DATA_ROOTS = { 'RDS': {
+LOGIN_REDIRECT_URL = 'index'
+LOGIN_URL = '/login/'
 
-                            'path': '/tmp',
-                            'user_dirs': True,
-                            'help_text': 'Research data store for current user',
-                            'filepathfield': False   # if false will use charfield path, if true filepathfield will look
-                                                    # recursively in a selected folder but will be to slow for complicated
-                                                    # folder structure
-                            },
-                        'DMA': {
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-                            'path': '/tmp/',
-                            'user_dirs': False,
-                            'help_text': 'Deep Metabolome Annotation research data store',
-                            'filepathfield': False
-                         }
-                        }
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [(os.path.join(BASE_DIR, 'templates')),
+                 ],
+
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages'
+            ],
+        },
+    },
+]
