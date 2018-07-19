@@ -1,7 +1,7 @@
 from django.conf.urls import url
-import views
+from misa import views
 
-from .models import OntologyTerm
+from misa.models import OntologyTerm
 from dal import autocomplete
 
 urlpatterns = [
