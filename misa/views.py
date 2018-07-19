@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
+
 from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http.response import HttpResponse
@@ -72,9 +74,9 @@ def success(request):
 class ISAJsonExport(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
-        print self.kwargs
+
         inv = Investigation.objects.filter(pk=self.kwargs['pk'])
-        print inv
+
         if inv:
             isa_out, json_out = create_isa_files(inv[0].id)
 
@@ -122,7 +124,7 @@ class OntologyTermSearchView(LoginRequiredMixin, View):
 
             # return render(request, 'misa/ontology_search_results.html', {'table': ont_table})
         else:
-            print form.errors
+            print(form.errors)
 
         return render(request, self.template_name, {'form': form})
 
@@ -145,7 +147,7 @@ class AddOntologyTermView(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         res = self.request.session.get('res')
-        print res
+
         c = self.kwargs['c']
         for row in res:
             if row['c']==int(c):

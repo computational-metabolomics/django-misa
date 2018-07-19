@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import zipfile
 import os
 import json
@@ -297,7 +299,7 @@ def create_isa_files(investigation_id):
 
 
         for k, dj_chr in dj_p['chr'].iteritems():
-            print 'ck', k
+
             #===========================================
             # Get chromatography protocols
             #===========================================
@@ -352,7 +354,7 @@ def create_isa_files(investigation_id):
                 # Get SPE
                 ####################################
                 if dj_ad.speprocess:
-                    print 'CHECK SPE'
+
                     itm_spe_prot = itm_p['spe'][dj_ad.speprocess.speprotocol.id]
                     spe_process = itm.Process(executes_protocol=itm_spe_prot)
                     spe_process.name = "spe-process-{}".format(dj_ad.code_field)

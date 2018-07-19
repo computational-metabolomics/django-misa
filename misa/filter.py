@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import django_filters
 from django_filters import rest_framework as filters
 from gfiles.models import GenericFile

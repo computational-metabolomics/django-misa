@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
 import zipfile
 import os
 
@@ -22,10 +24,9 @@ def upload_assay_data_files_zip(assayid, data_zipfile, data_mappingfile, user, c
 
     # Upload the files
     if zipfile.is_zipfile(data_zipfile):
-        print 'ZIPFILE'
         runs, mfiles = upload_files_from_zip(data_zipfile, user)
     else:
-        print 'data needs to be in zip file format'
+        print('data needs to be in zip file format')
         return 0
 
     mappingd = get_mapping_d(data_mappingfile, assayid=assayid, create_assay_details=create_assay_details)
@@ -113,7 +114,7 @@ def create_assay_detail(row, assayid):
                             polaritytype=PolarityType.objects.get(type=row['polarity']),
                             )
     mi.save()
-    print assayid
+
     ss = StudySample.objects.get(sample_name=row['sample'], study=Study.objects.get(assay__id=assayid))
 
     data_in = {'assay': assayid,
@@ -159,11 +160,10 @@ def row_2_codefield(row):
 def file_upload_mapping_match(filenames, mapping_l):
     missing_files = []
     for fn in filenames:
-        print fn
 
         matched = False
         for row in mapping_l:
-            print row
+
             map_filename = row['filename']
             if os.path.basename(fn) == map_filename:
                 matched = True

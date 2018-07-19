@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
+
 from __future__ import unicode_literals
 from django.test import TestCase
 from misa.models import PolarityType
@@ -7,7 +9,7 @@ from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol,
 from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, MeasurementProcess
 
 
-from init_setup import protocol_setup
+from .init_setup import protocol_setup
 
 
 class AssayDetailsCreateTestCase(TestCase):

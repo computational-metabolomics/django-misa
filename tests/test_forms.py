@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals, print_function
+
 from __future__ import unicode_literals
 
 from django.core.files import File
@@ -11,7 +13,7 @@ from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, Me
 from misa.models import StudySample, Assay, AssayDetail, AssayRun
 from misa.utils.isa_upload import upload_assay_data_files_zip
 from misa.forms import AssayDetailForm, UploadAssayDataFilesForm
-from init_setup import upload_assay_data_form_setup
+from .init_setup import upload_assay_data_form_setup
 
 import os
 
