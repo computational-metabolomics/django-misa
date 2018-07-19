@@ -11,7 +11,12 @@ setup(
     name='django-misa',
     version='0.0.1',
     packages=find_packages(),
-    install_requires=open('requirements.txt').read().splitlines(),
+    install_requires=[
+        'django==1.11',
+        'django-gfiles',
+        'isatools',
+        'django-mbrowse'
+    ],
     include_package_data=True,
     license="GPLv3",
     description='ISA organisation for metabolomic studies with Django',
