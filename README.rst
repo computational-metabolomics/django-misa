@@ -51,8 +51,8 @@ Quick start
 8. Add ontology information http://127.0.0.1:8000/search_ontologyterm
 
 
-.. |Build Status (Travis)| image:: https://travis-ci.com/computational-metabolomics/django-mbrowse.svg?branch=master
+.. |Build Status (Travis)| image:: https://travis-ci.com/computational-metabolomics/django-misa.svg?branch=master
    :target: https://travis-ci.com/computational-metabolomics/django-misa/
 
-.. |Py versions| image:: https://img.shields.io/pypi/pyversions/django-mbrowse.svg?style=flat&maxAge=3600
+.. |Py versions| image:: https://img.shields.io/pypi/pyversions/django-misa.svg?style=flat&maxAge=3600
    :target: https://pypi.python.org/pypi/django-misa/
