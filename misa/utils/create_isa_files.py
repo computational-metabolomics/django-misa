@@ -13,6 +13,7 @@ from misa.models import StudySample
 from misa.models import PolarityType
 from isatools import model as itm
 from isatools.isajson import ISAJSONEncoder
+import six
 
 def add_lcms_untargeted_meta(itm_i, itm_s, msms_performed=True):
     obi = itm.OntologySource(name='CHMO', description="Chemical Methods Ontology")
@@ -255,7 +256,7 @@ def create_isa_files(investigation_id):
 
 
 
-        for k, dj_ex in dj_p['ex'].iteritems():
+        for k, dj_ex in six.iteritems(dj_p['ex']):
 
             if dj_ex.name:
                 nm = dj_ex.name
@@ -279,7 +280,7 @@ def create_isa_files(investigation_id):
 
             itm_p['ex'][k] = extraction_protocol
 
-        for k, dj_spe in dj_p['spe'].iteritems():
+        for k, dj_spe in six.iteritems(dj_p['spe']):
             if dj_spe.name:
                 nm = dj_spe.name
             else:
@@ -298,7 +299,7 @@ def create_isa_files(investigation_id):
 
 
 
-        for k, dj_chr in dj_p['chr'].iteritems():
+        for k, dj_chr in six.iteritems(dj_p['chr']):
 
             #===========================================
             # Get chromatography protocols
@@ -312,7 +313,7 @@ def create_isa_files(investigation_id):
 
 
 
-        for k, dj_meas in dj_p['meas'].iteritems():
+        for k, dj_meas in six.iteritems(dj_p['meas']):
             #===========================================
             # Get measurment protocols (just mass spec for now)
             #===========================================

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals, print_function
 import zipfile
 import os
+import six
 
 from django.contrib.auth.models import User
 from django import forms
@@ -39,7 +40,7 @@ def upload_assay_data_files_zip(assayid, data_zipfile, data_mappingfile, user, c
 
 def map_run_to_assaydetail(runs, mappingd):
     # get the unique runs we need
-    unique_runs = list(set([run for filename, run in runs.iteritems()]))
+    unique_runs = list(set([run for filename, run in six.iteritems(runs)]))
 
     # loop through the runs
     for run in unique_runs:
