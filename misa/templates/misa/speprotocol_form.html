@@ -1,17 +1,27 @@
 {% extends 'gfiles/simple_form.html' %}
 {% load static %}
 {% block sb_admin_title %}
-    Create Chromatography Protocol
+    {% if form.instance.pk %}
+        Update Solid Phase Extraction Protocol
+    {% else %}
+        Create Solid Phase Extraction Protocol
+    {% endif %}
 {% endblock sb_admin_title %}
 {% block sb_admin_subheading %} <small></small> {% endblock sb_admin_subheading %}
 
 {% block sb_admin_breadcrumb %}
     <a href="{% url "index" %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
     / <a href="{% url "ilist" %}"></i> ISA Summary </a>
+    / <a href="{% url "spep_list" %}"></i> Solid Phase Extraction Protocols </a>
 {% endblock sb_admin_breadcrumb %}
 
 {% block sb_admin_breadcrumb_active %}
-    / Create Chromatography Protocol
+    {% if form.instance.pk %}
+        / Update Solid Phase Extraction Protocol
+    {% else %}
+        / Create Solid Phase Extraction Protocol
+    {% endif %}
+
 {% endblock sb_admin_breadcrumb_active %}
 {% block panel_title %}{% endblock panel_title %}
 

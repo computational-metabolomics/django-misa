@@ -28,8 +28,6 @@ class OntologyTerm(models.Model):
     short_form = models.CharField(max_length=200, blank=True, null=True)
     type = models.CharField(max_length=200, blank=True, null=True)
 
-
-
     def __str__(self):
         return '{} {}'.format(self.name, self.short_form)
 
@@ -128,26 +126,32 @@ class Study(models.Model):
 
 class StudyFactor(models.Model):
     ontologyterm_type = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True,
-                                          help_text=mark_safe("The type for the value e.g. gene knockout, concentration unit, etc"
+                                          help_text=mark_safe("The type for the value e.g. gene knockout, "
+                                                              "concentration unit, etc"
                                                               " If the ontology term is not available please "
                                                               " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
-                                                               verbose_name='Ontology Term (type)',
+                                          verbose_name='Study Factor Type',
                                           related_name='ontologyterm_type')
-    ontologyterm_value = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True,
-                                                      help_text=mark_safe("The value, e.g. if  wild type, 5 Mol, etc "
-                                                                "If the ontology term is not available please "
-                                                               " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
-                                                    verbose_name='Ontology Term (value)',
+    ontologyterm_value = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True, blank=True,
+                                            help_text=mark_safe("The value, e.g. if  wild type,"
+                                                        "If the ontology term is not available please "
+                                                    " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
+                                                    verbose_name='Study Factor Value (ontology term',
                                            related_name='ontologyterm_value')
 
     value = models.CharField(max_length=100, blank=True, null=True,
-                            help_text='If no appropiate ontological term for the value, then add free text here')
+                             verbose_name='Study Factor Value (non ontology term)',
+                            help_text='If no appropriate ontological term for the value, then add free text here')
+
+    ontologyterm_unit = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True, blank=True,
+                                                      help_text=mark_safe("If the value has a unit, find an appropiate ontology term"),
+                                                    verbose_name='Study Factor Unit', related_name='ontologyterm_unit')
 
     def __str__(self):              # __unicode__ on Python 2
         if self.ontologyterm_value:
-            return 'type: {}, value {},'.format(self.ontologyterm_type, self.ontologyterm_value)
+            return 'type: {}, value {}'.format(self.ontologyterm_type, self.ontologyterm_value)
         else:
-            return 'type: {}, value {},'.format(self.ontologyterm_type, self.value)
+            return 'type: {}, value {}'.format(self.ontologyterm_type, self.value)
 
 
 
@@ -188,6 +192,10 @@ class StudySample(models.Model):
     def __str__(self):              # __unicode__ on Python 2
         return self.sample_name
 
+    @property
+    def all_studyfactors(self):
+        return ' | '.join([str(x) for x in self.studyfactor.all()])
+
     class Meta:
         unique_together = (("sample_name", "study"),)
 
@@ -215,54 +223,46 @@ class AssayRun(models.Model):
         return '{}_RUN-{}'.format(self.assaydetail.code_field, self.run.id)
 
 
-class ChromatographyType(models.Model):
-    type = models.CharField(max_length=40, blank=True, null=True, unique=True)
-    ontologyterm = models.ManyToManyField(OntologyTerm)
-
-    def __str__(self):              # __unicode__ on Python 2
-        return self.type
-
-    def save(self, *args, **kwargs):
-        # this allows it to be searchable with autocomplete functionaltiy
-        self.type = self.ontologyterm.name
-        super(ChromatographyType, self).save(*args, **kwargs)
-
-
-class SpeType(models.Model):
-    type = models.CharField(unique=True, max_length=30)
-    ontologyterm = models.ManyToManyField(OntologyTerm)
-
-    def __str__(self):              # __unicode__ on Python 2
-        return self.type
-
-
-class ExtractionType(models.Model):
-    type = models.CharField(unique=True, max_length=6)
-    description = models.CharField(max_length=30, blank=True, null=True)
-    ontologyterm = models.ManyToManyField(OntologyTerm)
-
-    def __str__(self):              # __unicode__ on Python 2
-        return self.type
-
-
-class MeasurementTechnique(models.Model):
-    type = models.CharField(max_length=40, blank=True, null=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
-    ontologyterm = models.ManyToManyField(OntologyTerm)
-
-    def __str__(self):              # __unicode__ on Python 2
-        return self.type
-
-
-class PolarityType(models.Model):
-    type = models.CharField(max_length=30)
-    ontologyterm = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True)
+class PType(models.Model):
+    type = models.CharField(max_length=100, blank=True, null=True, unique=True)
+    description = models.CharField(max_length=200, blank=True, null=True)
+    ontologyterm = models.ManyToManyField(OntologyTerm, help_text=ONTOLOGY_ADD_HELP)
 
     class Meta:
-        verbose_name_plural = "polarity types"
+        abstract = True
 
     def __str__(self):              # __unicode__ on Python 2
         return self.type
+
+    @property
+    def all_ontologyterms(self):
+        return ' | '.join(['{}, {}'.format(x.name, x.short_form) for x in self.ontologyterm.all()])
+
+
+class ExtractionType(PType):
+    def __str__(self):              # __unicode__ on Python 2
+        return self.type
+
+
+class MeasurementTechnique(PType):
+    def __str__(self):              # __unicode__ on Python 2
+        return self.type
+
+
+class PolarityType(PType):
+    def __str__(self):              # __unicode__ on Python 2
+        return self.type
+
+
+class SpeType(PType):
+    def __str__(self):              # __unicode__ on Python 2
+        return self.type
+
+
+class ChromatographyType(PType):
+    def __str__(self):              # __unicode__ on Python 2
+        return self.type
+
 
 
 def validate_workflow_code(value):
@@ -280,9 +280,9 @@ def validate_workflow_code(value):
 class Protocol(models.Model):
     name = models.CharField(max_length=30)
     # protocoltype = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE)
-    description = models.TextField(null=True)
-    uri = models.CharField(max_length=200)
-    version = models.CharField(max_length=30)
+    description = models.TextField(null=True, blank=True)
+    uri = models.CharField(max_length=200, null=True, blank=True)
+    version = models.CharField(max_length=30, null=True, blank=True)
     code_field = models.CharField(max_length=20, null=False, unique=True)
 
     class Meta:
@@ -322,11 +322,12 @@ class DataTransformationProcess(models.Model):
     details = models.CharField(max_length=300, null=True, blank=True)
 
 
-
 class ExtractionProtocol(Protocol):
-    extractiontype = models.ForeignKey(ExtractionType, on_delete=models.CASCADE)
-    postextraction = models.CharField(max_length=300)
-    derivitisation  = models.CharField(max_length=300)
+    extractiontype = models.ForeignKey(ExtractionType, on_delete=models.CASCADE,
+                                       help_text=mark_safe("If a relevant term is not available, please "
+                             " <a target='_blank' href='/misa/et_create/'>add</a>."))
+    postextraction = models.CharField(max_length=300, null=True, blank=True)
+    derivitisation  = models.CharField(max_length=300, null=True, blank=True)
 
 
 
@@ -337,8 +338,10 @@ class ExtractionProcess(models.Model):
 
 
 class ChromatographyProtocol(Protocol):
-    chromatographytype = models.ForeignKey(ChromatographyType, on_delete=models.CASCADE)
-
+    chromatographytype = models.ForeignKey(ChromatographyType, on_delete=models.CASCADE,
+                                           help_text=mark_safe("If a relevant term is not available, please "
+                                                               " <a target='_blank' href='/misa/ct_create/'>add</a>.")
+                                           )
     instrument_name = models.CharField(max_length=300)
     # instrument_name_ontology_term = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE)
     # column_type_ontology_term = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE)
@@ -352,7 +355,10 @@ class ChromatographyProcess(models.Model):
 
 
 class SpeProtocol(Protocol):
-    spetype = models.ForeignKey(SpeType, on_delete=models.CASCADE)
+    spetype = models.ForeignKey(SpeType, on_delete=models.CASCADE,
+                                help_text=mark_safe("If a relevant term is not available, please "
+                                                    " <a target='_blank' href='/misa/spet_create/'>add</a>.")
+                                )
 
 
 class SpeProcess(models.Model):
@@ -363,7 +369,11 @@ class SpeProcess(models.Model):
 
 
 class MeasurementProtocol(Protocol):
-    measurementtechnique = models.ForeignKey(MeasurementTechnique, on_delete=models.CASCADE)
+    measurementtechnique = models.ForeignKey(MeasurementTechnique, on_delete=models.CASCADE,
+                                             help_text=mark_safe("If a relevant term is not available, please "
+                                                                 " <a target='_blank' href='/misa/mt_create/'>add</a>.")
+                                             )
+
 
 
 class MeasurementProcess(models.Model):

@@ -1,17 +1,26 @@
 {% extends 'gfiles/simple_form.html' %}
 {% load static %}
 {% block sb_admin_title %}
-    Create Chromatography Protocol
+    {% if form.instance.pk %}
+        Update Liquid Phase Extraction Type
+    {% else %}
+        Create Liquid Phase Extraction Type
+    {% endif %}
 {% endblock sb_admin_title %}
 {% block sb_admin_subheading %} <small></small> {% endblock sb_admin_subheading %}
 
 {% block sb_admin_breadcrumb %}
     <a href="{% url "index" %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
     / <a href="{% url "ilist" %}"></i> ISA Summary </a>
+    / <a href="{% url "et_list" %}"></i> Liquid Phase Extraction Types </a>
 {% endblock sb_admin_breadcrumb %}
 
 {% block sb_admin_breadcrumb_active %}
-    / Create Chromatography Protocol
+    {% if form.instance.pk %}
+        / Update Liquid Phase Extraction Type
+    {% else %}
+        / Create Liquid Phase Extraction Type
+    {% endif %}
 {% endblock sb_admin_breadcrumb_active %}
 {% block panel_title %}{% endblock panel_title %}
 

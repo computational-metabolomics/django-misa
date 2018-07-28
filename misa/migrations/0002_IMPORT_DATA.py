@@ -98,7 +98,7 @@ def reverse_func(apps, schema_editor):
     sample_class_input = ['ANIMAL', 'BLANK', 'COMPOUND']
     m_input = ['DI-MS', 'DI-MSn', 'LC-MS', 'LC-MSMS']
     p_input = ['POSITIVE', 'NEGATIVE', 'NA']
-    extraction_input = ['AP', 'P']
+    extraction_input = ['AP', 'P', 'COMBINED']
     spe_input = ['WAX', 'WCX', 'C18']
     lc_input = ['PHE', 'C30', 'C18']
 

@@ -39,12 +39,16 @@ from misa.models import (
     ExtractionProtocol,
     ExtractionType,
     SpeProtocol,
-    SpeType
+    SpeType,
+    SampleCollectionProtocol,
+    DataTransformationProtocol,
+
 )
 
 from misa.forms import (
     UploadAssayDataFilesForm,
     SearchOntologyTermForm,
+
     StudyFactorForm,
     StudyForm,
     OrganismPartForm,
@@ -58,14 +62,61 @@ from misa.forms import (
     ExtractionTypeForm,
     SpeProtocolForm,
     SpeTypeForm,
+    SampleCollectionProtocolForm,
+    DataTransformationProtocolForm,
 )
 
 from misa.utils.isa_upload import upload_assay_data_files_zip
 from misa.utils.create_isa_files import create_isa_files
 from misa.utils.ontology_utils import search_ontology_term, search_ontology_term_shrt
 from misa.tasks import upload_assay_data_files_dir_task
-from misa.tables import AssayFileTable, AssayDetailTable, ISAFileSelectTable, InvestigationTable, AssayTable, OntologyTermTable
-from misa.filter import ISAFileFilter, InvestigationFilter, AssayFilter
+from misa.tables import (
+    AssayFileTable,
+    AssayDetailTable,
+    ISAFileSelectTable,
+    InvestigationTable,
+    AssayTable,
+    OntologyTermTable,
+    OntologyTermTableLocal,
+    SampleCollectionProtocolTable,
+    ExtractionProtocolTable,
+    ExtractionTypeTable,
+    ChromatographyProtocolTable,
+    ChromatographyTypeTable,
+    SpeProtocolTable,
+    SpeTypeTable,
+    MeasurementProtocolTable,
+    MeasurementTechniqueTable,
+    DataTransformationProtocolTable,
+    StudySampleTable,
+    StudyFactorTable,
+    OrganismTable,
+    OrganismPartTable,
+
+
+)
+from misa.filter import (
+    ISAFileFilter,
+    InvestigationFilter,
+    AssayFilter,
+    ExtractionProtocolFilter,
+    ExtractionTypeFilter,
+    ChromatographyProtocolFilter,
+    ChromatographyTypeFilter,
+    SpeProtocolFilter,
+    SpeTypeFilter,
+    MeasurementProtocolFilter,
+    MeasurementTechniqueFilter,
+    SampleCollectionProtocolFilter,
+    DataTransformationProtocolFilter,
+    OntologyTermFilter,
+    StudySampleFilter,
+    StudyFactorFilter,
+    OrganismFilter,
+    OrganismPartFilter
+
+)
+
 from django.shortcuts import redirect
 
 def success(request):
@@ -91,26 +142,35 @@ class ISAJsonExport(LoginRequiredMixin, View):
         return HttpResponse(json_out, content_type="application/json")
 
 
-
-
-
-
-
-
-
 ############################################################################################
 # Adding ontology terms
 ############################################################################################
 class OntologyTermCreateView(LoginRequiredMixin, CreateView):
     model = OntologyTerm
-    success_url = '/misa/success'
+    success_url = reverse_lazy('list_ontologyterm')
     fields = '__all__'
+
+class OntologyTermUpdateView(LoginRequiredMixin, UpdateView):
+    model = OntologyTerm
+    success_url = reverse_lazy('list_ontologyterm')
+    fields = '__all__'
+
+class OntologyTermDeleteView(DeleteView):
+    model = OntologyTerm
+    success_url = reverse_lazy('list_ontologyterm')
+    template_name = 'misa/confirm_delete.html'
+
+
+class OntologyTermListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = OntologyTermTableLocal
+    model = OntologyTerm
+    filterset_class = OntologyTermFilter
+    template_name = 'misa/ontologyterm_list.html'
 
 
 class OntologyTermSearchView(LoginRequiredMixin, View):
 
-    success_url = '/misa/success'
-    redorect_to = '/misa/search_ontologyterm_result/'
+    redirect_to = '/misa/search_ontologyterm_result/'
 
     template_name = 'misa/searchontologyterm_form.html'
     def get(self, request, *args, **kwargs):
@@ -125,7 +185,7 @@ class OntologyTermSearchView(LoginRequiredMixin, View):
             search_term = form.cleaned_data['search_term']
             res = search_ontology_term(search_term)
             request.session['res'] = res  # set in session
-            return redirect(self.redorect_to)
+            return redirect(self.redirect_to)
 
             # return render(request, 'misa/ontology_search_results.html', {'table': ont_table})
         else:
@@ -147,7 +207,7 @@ class OntologyTermSearchResultView(LoginRequiredMixin, View):
 
 class AddOntologyTermView(LoginRequiredMixin, CreateView):
     model = OntologyTerm
-    success_url = '/misa/success'
+    success_url = reverse_lazy('list_ontologyterm')
     fields = '__all__'
 
     def get_initial(self):
@@ -184,18 +244,59 @@ class OntologyTermAutocomplete(autocomplete.Select2QuerySetView):
 ############################################################################################
 class OrganismCreateView(LoginRequiredMixin, CreateView):
     model = Organism
-    success_url = '/misa/success'
+    success_url = reverse_lazy('org_list')
     form_class = OrganismForm
 
 
+class OrganismUpdateView(LoginRequiredMixin, UpdateView):
+    model = Organism
+    form_class = OrganismForm
+    success_url = reverse_lazy('org_list')
+
+
+class OrganismDeleteView(DeleteView):
+    model = Organism
+    success_url = reverse_lazy('org_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+class OrganismListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = OrganismTable
+    model = Organism
+    filterset_class = OrganismFilter
+    template_name = 'misa/organism_list.html'
+
+
+############################################################################################
+# Organism Part Views
+############################################################################################
 class OrganismPartCreateView(LoginRequiredMixin, CreateView):
     form_class = OrganismPartForm
     model = OrganismPart
-    success_url = '/misa/success'
+    success_url = reverse_lazy('orgpart_list')
+
+
+class OrganismPartUpdateView(LoginRequiredMixin, UpdateView):
+    model = OrganismPart
+    form_class = OrganismPartForm
+    success_url = reverse_lazy('orgpart_list')
+
+
+class OrganismPartDeleteView(DeleteView):
+    model = OrganismPart
+    success_url = reverse_lazy('orgpart_list')
+    template_name = 'misa/confirm_delete.html'
+
+class OrganismPartListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = OrganismPartTable
+    model = OrganismPart
+    filterset_class = OrganismPartFilter
+    template_name = 'misa/organism_part_list.html'
 
 
 class OrganismAutocomplete(OntologyTermAutocomplete):
     model_class = Organism
+
 
 class OrganismPartAutocomplete(OntologyTermAutocomplete):
     model_class = OrganismPart
@@ -204,68 +305,300 @@ class OrganismPartAutocomplete(OntologyTermAutocomplete):
 ############################################################################################
 # Protocol views
 ###########################################################################################
+#=======================================
+# Sample Collection Protocol
+#=======================================
+class SampleCollectionProtocolCreateView(LoginRequiredMixin, CreateView):
+    model = SampleCollectionProtocol
+    form_class = SampleCollectionProtocolForm
+    success_url = reverse_lazy('scp_list')
+
+
+class SampleCollectionProtocolUpdateView(LoginRequiredMixin, UpdateView):
+    model = SampleCollectionProtocol
+    form_class = SampleCollectionProtocolForm
+    success_url = reverse_lazy('scp_list')
+
+
+class SampleCollectionProtocolDeleteView(DeleteView):
+    model = SampleCollectionProtocol
+    success_url = reverse_lazy('scp_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+class SampleCollectionProtocolListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = SampleCollectionProtocolTable
+    model = SampleCollectionProtocol
+    filterset_class = SampleCollectionProtocolFilter
+    template_name = 'misa/sample_collection_protocol_list.html'
+
+
+
+#=======================================
+# Sample Collection Protocol
+#=======================================
+class DataTransformationProtocolCreateView(LoginRequiredMixin, CreateView):
+    model = DataTransformationProtocol
+    form_class = DataTransformationProtocolForm
+    success_url = reverse_lazy('dp_list')
+
+
+class DataTransformationProtocolUpdateView(LoginRequiredMixin, UpdateView):
+    model = DataTransformationProtocol
+    form_class = DataTransformationProtocolForm
+    success_url = reverse_lazy('dp_list')
+
+
+class DataTransformationProtocolDeleteView(DeleteView):
+    model = DataTransformationProtocol
+    success_url = reverse_lazy('dp_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+class DataTransformationProtocolListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = DataTransformationProtocolTable
+    model = DataTransformationProtocol
+    filterset_class = DataTransformationProtocolFilter
+    template_name = 'misa/data_transformation_protocol_list.html'
+
+
+
+
+#=======================================
+# Extraction Protocol
+#=======================================
+class ExtractionProtocolCreateView(LoginRequiredMixin, CreateView):
+    model = ExtractionProtocol
+    form_class = ExtractionProtocolForm
+    success_url = reverse_lazy('ep_list')
+
+
+class ExtractionProtocolListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
+    table_class = ExtractionProtocolTable
+    model = ExtractionProtocol
+    filterset_class = ExtractionProtocolFilter
+    template_name = 'misa/extraction_protocol_list.html'
+
+
+class ExtractionProtocolUpdateView(LoginRequiredMixin, UpdateView):
+    model = ExtractionProtocol
+    form_class = ExtractionProtocolForm
+    success_url = reverse_lazy('ep_list')
+
+
+class ExtractionProtocolDeleteView(DeleteView):
+    model = ExtractionProtocol
+    success_url = reverse_lazy('ep_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+#=======================================
+# Extraction Type
+#=======================================
+class ExtractionTypeCreateView(LoginRequiredMixin, CreateView):
+    model = ExtractionType
+    form_class = ExtractionTypeForm
+    success_url = reverse_lazy('et_list')
+
+
+class ExtractionTypeUpdateView(LoginRequiredMixin, UpdateView):
+    model = ExtractionType
+    form_class = ExtractionTypeForm
+    success_url = reverse_lazy('et_list')
+
+class ExtractionTypeDeleteView(DeleteView):
+    model = ExtractionType
+    success_url = reverse_lazy('et_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+class ExtractionTypeListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
+    table_class = ExtractionTypeTable
+    model = ExtractionType
+    filterset_class = ExtractionTypeFilter
+    template_name = 'misa/extraction_type_list.html'
+
+class ExtractionTypeAutocomplete(OntologyTermAutocomplete):
+    model_class = ExtractionType
+
+
+#=======================================
+# Chromatography protocol
+#=======================================
 class ChromatographyProtocolCreateView(LoginRequiredMixin, CreateView):
     model = ChromatographyProtocol
     form_class = ChromatographyProtocolForm
-    success_url = '/misa/success'
+    success_url = reverse_lazy('cp_list')
+
+class ChromatographyProtocolUpdateView(LoginRequiredMixin, UpdateView):
+    model = ChromatographyProtocol
+    form_class = ChromatographyProtocolForm
+    success_url = reverse_lazy('cp_list')
+
+class ChromatographyProtocolDeleteView(DeleteView):
+    model = ChromatographyProtocol
+    success_url = reverse_lazy('cp_list')
+    template_name = 'misa/confirm_delete.html'
+
+class ChromatographyProtocolListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
+    table_class = ChromatographyProtocolTable
+    model = ChromatographyProtocol
+    filterset_class = ChromatographyProtocolFilter
+    template_name = 'misa/chromatography_protocol_list.html'
 
 
+#=======================================
+# Chromatography type
+#=======================================
 class ChromatographyTypeCreateView(LoginRequiredMixin, CreateView):
     model = ChromatographyType
     form_class = ChromatographyTypeForm
-    success_url = '/misa/success'
+    success_url = reverse_lazy('ct_list')
+
+class ChromatographyTypeUpdateView(LoginRequiredMixin, UpdateView):
+    model = ChromatographyType
+    form_class = ChromatographyTypeForm
+    success_url = reverse_lazy('ct_list')
+
+class ChromatographyTypeDeleteView(DeleteView):
+    model = ChromatographyType
+    success_url = reverse_lazy('ct_list')
+    template_name = 'misa/confirm_delete.html'
+
+class ChromatographyTypeListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
+    table_class = ChromatographyTypeTable
+    model = ChromatographyType
+    filterset_class = ChromatographyTypeFilter
+    template_name = 'misa/chromatography_type_list.html'
 
 
 class ChromatographyTypeAutocomplete(OntologyTermAutocomplete):
     model_class = ChromatographyType
 
 
+#=======================================
+# SPE protocol
+#=======================================
+class SpeProtocolCreateView(LoginRequiredMixin, CreateView):
+    model = SpeProtocol
+    form_class = SpeProtocolForm
+    success_url = reverse_lazy('spep_list')
+
+
+class SpeProtocolUpdateView(LoginRequiredMixin, UpdateView):
+    model = SpeProtocol
+    form_class = SpeProtocolForm
+    success_url = reverse_lazy('spep_list')
+
+
+class SpeProtocolDeleteView(DeleteView):
+    model = SpeProtocol
+    success_url = reverse_lazy('spep_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+class SpeProtocolListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
+    table_class = SpeProtocolTable
+    model = SpeProtocol
+    filterset_class = SpeProtocolFilter
+    template_name = 'misa/spe_protocol_list.html'
+
+
+#=======================================
+# SPE type
+#=======================================
+class SpeTypeCreateView(LoginRequiredMixin, CreateView):
+    model = SpeType
+    form_class = SpeTypeForm
+    success_url = reverse_lazy('spet_list')
+
+
+class SpeTypeUpdateView(LoginRequiredMixin, UpdateView):
+    model = SpeType
+    form_class = SpeTypeForm
+    success_url = reverse_lazy('spet_list')
+
+
+class SpeTypeDeleteView(DeleteView):
+    model = SpeType
+    success_url = reverse_lazy('spet_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+class SpeTypeListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
+    table_class = SpeTypeTable
+    model = SpeType
+    filterset_class = SpeTypeFilter
+    template_name = 'misa/spe_type_list.html'
+
+
+class SpeTypeAutocomplete(OntologyTermAutocomplete):
+    model_class = SpeType
+
+
+
+#=======================================
+# Measurement protocol
+#=======================================
 class MeasurementProtocolCreateView(LoginRequiredMixin, CreateView):
     model = MeasurementProtocol
     form_class = MeasurementProtocolForm
-    success_url = '/misa/success'
+    success_url = reverse_lazy('mp_list')
 
 
+class MeasurementProtocolUpdateView(LoginRequiredMixin, UpdateView):
+    model = MeasurementProtocol
+    form_class = MeasurementProtocolForm
+    success_url = reverse_lazy('mp_list')
+
+
+class MeasurementProtocolDeleteView(DeleteView):
+    model = MeasurementProtocol
+    success_url = reverse_lazy('mp_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+class MeasurementProtocolListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = MeasurementProtocolTable
+    model = MeasurementProtocol
+    filterset_class = MeasurementProtocolFilter
+    template_name = 'misa/measurement_protocol_list.html'
+
+
+#=======================================
+# Measurement technique
+#=======================================
 class MeasurementTechniqueCreateView(LoginRequiredMixin, CreateView):
     model = MeasurementTechnique
     form_class = MeasurementTechniqueForm
-    success_url = '/misa/success'
+    success_url = reverse_lazy('mt_list')
 
+
+class MeasurementTechniqueUpdateView(LoginRequiredMixin, UpdateView):
+    model = MeasurementTechnique
+    form_class = MeasurementTechniqueForm
+    success_url = reverse_lazy('mt_list')
+
+
+class MeasurementTechniqueDeleteView(DeleteView):
+    model = MeasurementTechnique
+    success_url = reverse_lazy('mt_list')
+    template_name = 'misa/confirm_delete.html'
+
+
+class MeasurementTechniqueListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
+    table_class = MeasurementTechniqueTable
+    model = MeasurementTechnique
+    filterset_class = MeasurementTechniqueFilter
+    template_name = 'misa/measurement_technique_list.html'
 
 class MeasurementTechniqueAutocomplete(OntologyTermAutocomplete):
     model_class = MeasurementTechnique
 
 
-class ExtractionProtocolCreateView(LoginRequiredMixin, CreateView):
-    model = ExtractionProtocol
-    form_class = ExtractionProtocolForm
-    success_url = '/misa/success'
 
 
-class ExtractionTypeCreateView(LoginRequiredMixin, CreateView):
-    model = ExtractionType
-    form_class = ExtractionTypeForm
-    success_url = '/misa/success'
 
-
-class ExtractionTypeAutocomplete(OntologyTermAutocomplete):
-    model_class = ExtractionType
-
-
-class SpeProtocolCreateView(LoginRequiredMixin, CreateView):
-    model = SpeProtocol
-    form_class = SpeProtocolForm
-    success_url = '/misa/success'
-
-
-class SpeTypeCreateView(LoginRequiredMixin, CreateView):
-    model = SpeType
-    form_class = SpeTypeForm
-    success_url = '/misa/success'
-
-
-class SpeTypeAutocomplete(OntologyTermAutocomplete):
-    model_class = SpeType
 
 
 
@@ -277,14 +610,14 @@ class SpeTypeAutocomplete(OntologyTermAutocomplete):
 class InvestigationCreateView(LoginRequiredMixin, CreateView):
     model = Investigation
     success_msg = "Investigation created"
-    success_url = '/misa/success'
+    success_url = reverse_lazy('ilist')
     fields = '__all__'
 
 
 class InvestigationUpdateView(LoginRequiredMixin, UpdateView):
     model = Investigation
     success_msg = "Investigation updated"
-    success_url = '/misa/success'
+    success_url = reverse_lazy('ilist')
     fields = '__all__'
 
 
@@ -299,9 +632,7 @@ class InvestigationDetailTablesView(LoginRequiredMixin, View):
     '''
 
     template_name = 'misa/investigation_detail_tables.html'
-    table_class = AssayTable
-    filter_class = AssayFilter
-
+ 
 
     def get_queryset(self):
         return Investigation.objects.get(pk=self.kwargs['pk'])
@@ -324,15 +655,16 @@ class InvestigationDetailTablesView(LoginRequiredMixin, View):
         c = 0
         # loop through all the data_inputs from the associated workflow
         for s in investigation.study_set.all():
+
             assays = s.assay_set.all()
 
             # Create an invidivual filter for each table
-            f = self.filter_class(request.GET, queryset=assays, prefix=c)
+            f = AssayFilter(request.GET, queryset=assays, prefix=c)
 
             # Create a checkbox column for each table, so that the javascript can see which checkbox has been
             # selected
             # create a new table with the custom column
-            table = self.table_class(f.qs, prefix=c, attrs={'name': c, 'id': c, 'class': 'paleblue'})
+            table = AssayTable(f.qs, prefix=c, attrs={'name': c, 'id': c, 'class': 'paleblue'})
 
             # load the table into the requestconfig
             rc.configure(table)
@@ -341,6 +673,8 @@ class InvestigationDetailTablesView(LoginRequiredMixin, View):
             tables.append(table)
             filters.append(f)
             studies.append(s)
+
+
             c+=1
 
         # create a list of all the information. Using a simple list format as it is just easy to use in the template
@@ -388,12 +722,18 @@ class StudyCreateView(LoginRequiredMixin, CreateView):
 class StudyUpdateView(LoginRequiredMixin, UpdateView):
     model = Study
     success_url = '/misa/success'
-    fields = '__all__'
+    form_class = StudyForm
 
 
 class StudyListView(LoginRequiredMixin, ListView):
     model = Study
     fields = '__all__'
+
+class StudyDeleteView(DeleteView):
+    model = Study
+    success_url = reverse_lazy('ilist')
+    template_name = 'misa/confirm_delete.html'
+
 
 
 ############################################################################################
@@ -470,7 +810,8 @@ class UploadAssayDataFilesView(LoginRequiredMixin, View):
 
 class AssayDeleteView(DeleteView):
     model = Assay
-    success_url = reverse_lazy('misa/ilist')
+    success_url = reverse_lazy('ilist')
+    template_name = 'misa/confirm_delete.html'
 
 
 
@@ -480,18 +821,26 @@ class AssayDeleteView(DeleteView):
 class StudySampleCreateView(LoginRequiredMixin, CreateView):
     form_class = StudySampleForm
     model = StudySample
-    success_url = '/misa/success'
-
+    success_url = reverse_lazy('ssam_list')
 
 
 class StudySampleUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = StudySampleForm
     model = StudySample
-    success_url = '/misa/success'
-    fields = '__all__'
+    success_url = reverse_lazy('ssam_list')
 
-class StudySampleListView(LoginRequiredMixin, ListView):
+
+class StudySampleDeleteView(DeleteView):
     model = StudySample
-    fields = '__all__'
+    success_url = reverse_lazy('ssam_list')
+    template_name = 'misa/confirm_delete.html'
+
+class StudySampleListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = StudySampleTable
+    model = StudySample
+    filterset_class = StudySampleFilter
+    template_name = 'misa/study_sample_list.html'
+
 
 
 ############################################################################################
@@ -499,18 +848,27 @@ class StudySampleListView(LoginRequiredMixin, ListView):
 ############################################################################################
 class StudyFactorCreateView(LoginRequiredMixin, CreateView):
     model = StudyFactor
-    success_url = '/misa/success'
-
     form_class = StudyFactorForm
+    success_url = reverse_lazy('sflist')
+
 
 class StudyFactorUpdateView(LoginRequiredMixin, UpdateView):
     model = StudyFactor
-    success_url = '/misa/success'
-    fields = '__all__'
+    form_class =  StudyFactorForm
+    success_url = reverse_lazy('sflist')
 
-class StudyFactorListView(LoginRequiredMixin, ListView):
+
+class StudyFactorDeleteView(DeleteView):
     model = StudyFactor
-    fields = '__all__'
+    success_url = reverse_lazy('sflist')
+    template_name = 'misa/confirm_delete.html'
+
+class StudyFactorListView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    table_class = StudyFactorTable
+    model = StudyFactor
+    filterset_class = StudyFactorFilter
+    template_name = 'misa/study_factor_list.html'
+
 
 
 

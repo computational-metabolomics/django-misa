@@ -2,7 +2,27 @@
 from __future__ import unicode_literals, print_function
 import django_tables2 as tables
 from mbrowse.models import MFile
-from misa.models import AssayDetail, Investigation, Assay, OntologyTerm
+from misa.models import (
+    ExtractionProtocol,
+    ExtractionType,
+    ChromatographyProtocol,
+    ChromatographyType,
+    SpeProtocol,
+    SpeType,
+    MeasurementProtocol,
+    MeasurementTechnique,
+    AssayDetail,
+    Investigation,
+    Assay,
+    OntologyTerm,
+    SampleCollectionProtocol,
+    DataTransformationProtocol,
+    StudySample,
+    StudyFactor,
+    Organism,
+    OrganismPart,
+
+)
 from django_tables2_column_shifter.tables import ColumnShiftTable
 from gfiles.models import GenericFile
 from django_tables2.utils import A
@@ -204,6 +224,169 @@ class OntologyTermTable(ColumnShiftTable):
 
     class Meta:
         model = OntologyTerm
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+class OntologyTermTableLocal(ColumnShiftTable):
+    update = tables.LinkColumn('update_ontologyterm', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('delete_ontologyterm', text='delete', verbose_name='Delete', args=[A('id')])
+
+    class Meta:
+        model = OntologyTerm
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+class ExtractionProtocolTable(tables.Table):
+    extractiontype = tables.LinkColumn('et_list', verbose_name='Type')
+    update = tables.LinkColumn('ep_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('ep_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = ExtractionProtocol
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+class ExtractionTypeTable(tables.Table):
+
+    update = tables.LinkColumn('et_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('et_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = ExtractionType
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+        fields = ('id', 'type', 'description', 'all_ontologyterms')
+
+
+class SpeProtocolTable(tables.Table):
+    spetype = tables.LinkColumn('spet_list', verbose_name='Type')
+    update = tables.LinkColumn('spep_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('spep_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = SpeProtocol
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+class SpeTypeTable(tables.Table):
+
+    update = tables.LinkColumn('spet_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('spet_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = SpeType
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+        fields = ('id', 'type', 'description', 'all_ontologyterms')
+
+
+class ChromatographyProtocolTable(tables.Table):
+    chromatographytype = tables.LinkColumn('ct_list', verbose_name='Type')
+    update = tables.LinkColumn('cp_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('cp_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = ChromatographyProtocol
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+class ChromatographyTypeTable(tables.Table):
+
+    update = tables.LinkColumn('ct_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('ct_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = ChromatographyType
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+        fields = ('id', 'type', 'description', 'all_ontologyterms')
+
+
+class MeasurementProtocolTable(tables.Table):
+    measurementtechnique = tables.LinkColumn('mt_list', verbose_name='Technique')
+    update = tables.LinkColumn('mp_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('mp_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = MeasurementProtocol
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+class MeasurementTechniqueTable(tables.Table):
+
+    update = tables.LinkColumn('mt_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('mt_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = MeasurementTechnique
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+        fields = ('id', 'type', 'description', 'all_ontologyterms')
+
+
+class SampleCollectionProtocolTable(tables.Table):
+
+    update = tables.LinkColumn('scp_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('scp_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = SampleCollectionProtocol
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+class DataTransformationProtocolTable(tables.Table):
+
+    update = tables.LinkColumn('dtp_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('dtp_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = DataTransformationProtocol
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+
+class StudySampleTable(tables.Table):
+
+    investigation = tables.Column(accessor='study.investigation.name', verbose_name='Investigation')
+    study = tables.Column(accessor='study.name', verbose_name='Study')
+    all_studyfactors = tables.LinkColumn('sflist', verbose_name='Study Factors')
+    organism = tables.LinkColumn('org_list')
+    organism_part = tables.LinkColumn('orgpart_list')
+
+    update = tables.LinkColumn('ssam_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('ssam_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = StudySample
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+        fields = ('id', 'investigation', 'study', 'sample_name', 'all_studyfactors', 'organism', 'organism_part', 'update', 'delete')
+
+
+class StudyFactorTable(tables.Table):
+
+    update = tables.LinkColumn('sfupdate', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('sfdelete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = StudyFactor
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+
+class OrganismTable(tables.Table):
+
+    update = tables.LinkColumn('org_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('org_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = Organism
+        attrs = {'class': 'paleblue'}
+        template = 'django_tables2/bootstrap.html'
+
+
+class OrganismPartTable(tables.Table):
+
+    update = tables.LinkColumn('org_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('org_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    class Meta:
+        model = OrganismPart
         attrs = {'class': 'paleblue'}
         template = 'django_tables2/bootstrap.html'
 

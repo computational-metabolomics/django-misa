@@ -20,7 +20,9 @@ from misa.models import (
     ExtractionProtocol,
     ExtractionType,
     SpeProtocol,
-    SpeType
+    SpeType,
+    SampleCollectionProtocol,
+    DataTransformationProtocol,
 )
 from misa.utils.isa_upload import check_mapping_details, file_upload_mapping_match
 
@@ -158,7 +160,8 @@ class StudyFactorForm(forms.ModelForm):
         fields = ('__all__')
         widgets = {
             'ontologyterm_type': autocomplete.ModelSelect2(url='ontologyterm-autocomplete'),
-            'ontologyterm_value': autocomplete.ModelSelect2(url='ontologyterm-autocomplete')
+            'ontologyterm_value': autocomplete.ModelSelect2(url='ontologyterm-autocomplete'),
+            'ontologyterm_unit': autocomplete.ModelSelect2(url='ontologyterm-autocomplete')
         }
 
 class StudyForm(forms.ModelForm):
@@ -168,8 +171,8 @@ class StudyForm(forms.ModelForm):
         model = Study
         fields = ('__all__')
         widgets = {
-            # 'submission_date': forms.DateTimeInput(attrs={'id':'datetimepicker1'}),
-            # 'public_release_date': forms.DateTimeInput(attrs={'id': 'datetimepicker2'}),
+            'submission_date': forms.widgets.DateInput(attrs={'type': 'date'}),
+            'public_release_date':  forms.widgets.DateInput(attrs={'type': 'date'}),
 
             'study_design_descriptors': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete'),
 
@@ -258,8 +261,19 @@ class SpeProtocolForm(forms.ModelForm):
 
 class SpeTypeForm(forms.ModelForm):
     class Meta:
-        model = ExtractionType
+        model = SpeType
         fields = ('__all__')
         widgets = {
             'ontologyterm': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete')
         }
+
+
+class SampleCollectionProtocolForm(forms.ModelForm):
+    class Meta:
+        model = SampleCollectionProtocol
+        fields = ('__all__')
+
+class DataTransformationProtocolForm(forms.ModelForm):
+    class Meta:
+        model = DataTransformationProtocol
+        fields = ('__all__')

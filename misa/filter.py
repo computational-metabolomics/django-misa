@@ -1,13 +1,33 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
+from dal import autocomplete
 import django_filters
 from django_filters import rest_framework as filters
 from gfiles.models import GenericFile
-from misa.models import Investigation, Assay
+from misa.models import (
+    ExtractionProtocol,
+    ExtractionType,
+    SpeProtocol,
+    SpeType,
+    ChromatographyProtocol,
+    ChromatographyType,
+    MeasurementTechnique,
+    MeasurementProtocol,
+    SampleCollectionProtocol,
+    DataTransformationProtocol,
+    Investigation,
+    Assay,
+    OntologyTerm,
+    StudySample,
+    StudyFactor,
+    Organism,
+    OrganismPart
+
+)
 
 
 class ISAFileFilter(filters.FilterSet):
-    investigation =  django_filters.CharFilter('mfile__run__assayrun__assaydetail__assay__study__investigation__name',
+    investigation = django_filters.CharFilter('mfile__run__assayrun__assaydetail__assay__study__investigation__name',
                                   lookup_expr='contains', label="Investigation contains")
 
     study = django_filters.CharFilter('mfile__run__assayrun__assaydetail__assay__study__name',
@@ -64,14 +84,10 @@ class ISAFileFilter(filters.FilterSet):
 
         fields = {
             'original_filename': ['contains'],
-
-            # 'galaxy_id': ['contains'],
-            # 'accessible': ['isnull']
         }
 
 
 class InvestigationFilter(filters.FilterSet):
-
 
     class Meta:
         model = Investigation
@@ -79,20 +95,172 @@ class InvestigationFilter(filters.FilterSet):
         fields = {
             'name': ['contains'],
 
-            # 'galaxy_id': ['contains'],
-            # 'accessible': ['isnull']
         }
 
 
 class AssayFilter(filters.FilterSet):
-
 
     class Meta:
         model = Assay
 
         fields = {
             'name': ['contains'],
-
-            # 'galaxy_id': ['contains'],
-            # 'accessible': ['isnull']
         }
+
+
+class ExtractionProtocolFilter(filters.FilterSet):
+
+    class Meta:
+        model = ExtractionProtocol
+
+        fields = {
+            'name': ['contains']
+        }
+
+
+class ExtractionTypeFilter(filters.FilterSet):
+
+    class Meta:
+        model = ExtractionType
+
+        fields = {
+            'type': ['contains']
+        }
+
+
+class SpeProtocolFilter(filters.FilterSet):
+
+    class Meta:
+        model = SpeProtocol
+
+        fields = {
+            'name': ['contains']
+        }
+
+
+class SpeTypeFilter(filters.FilterSet):
+
+    class Meta:
+        model = SpeType
+
+        fields = {
+            'type': ['contains']
+        }
+
+
+class ChromatographyProtocolFilter(filters.FilterSet):
+
+    class Meta:
+        model = ChromatographyProtocol
+
+        fields = {
+            'name': ['contains']
+        }
+
+class ChromatographyTypeFilter(filters.FilterSet):
+
+    class Meta:
+        model = ChromatographyType
+
+        fields = {
+            'type': ['contains']
+        }
+
+
+class MeasurementProtocolFilter(filters.FilterSet):
+
+    class Meta:
+        model = MeasurementProtocol
+
+        fields = {
+            'name': ['contains']
+        }
+
+class MeasurementTechniqueFilter(filters.FilterSet):
+
+    class Meta:
+        model = MeasurementTechnique
+
+        fields = {
+            'type': ['contains']
+        }
+
+
+class SampleCollectionProtocolFilter(filters.FilterSet):
+
+    class Meta:
+        model = SampleCollectionProtocol
+
+        fields = {
+            'name': ['contains']
+        }
+
+
+class DataTransformationProtocolFilter(filters.FilterSet):
+
+    class Meta:
+        model = DataTransformationProtocol
+
+        fields = {
+            'name': ['contains']
+        }
+
+
+class OntologyTermFilter(filters.FilterSet):
+
+    class Meta:
+        model = OntologyTerm
+
+        fields = {
+            'name': ['contains'],
+            'iri': ['contains'],
+            'ontology_id': ['contains'],
+            'obo_id': ['contains'],
+            'ontology_name': ['contains'],
+            'ontology_prefix': ['contains'],
+            'type': ['contains'],
+            'short_form': ['contains']
+        }
+
+
+class StudySampleFilter(filters.FilterSet):
+
+    class Meta:
+        model = StudySample
+
+        fields = {
+            'sample_name': ['contains'],
+        }
+
+
+class StudyFactorFilter(filters.FilterSet):
+    type = django_filters.CharFilter('ontologyterm_type__name', lookup_expr='contains',
+                                   label="Study Factor Type")
+
+    value_ont = django_filters.CharFilter('ontologyterm_value__name', lookup_expr='contains',
+                                   label="Study Factor Value")
+
+    value = django_filters.CharFilter('value', lookup_expr='contains',
+                                   label="Study Factor Value (non ontological term)")
+
+    unit = django_filters.CharFilter('value', lookup_expr='contains',
+                                   label="Study Factor Unit")
+
+
+    class Meta:
+        model = StudyFactor
+        # fields = '__all__'
+        # fields = ('type', 'value_ont', 'value', 'unit')
+        fields = ('type', 'value_ont', 'value', 'unit')
+
+
+class OrganismFilter(filters.FilterSet):
+    class Meta:
+        model = Organism
+        fields = ('name',)
+
+
+class OrganismPartFilter(filters.FilterSet):
+    class Meta:
+        model = OrganismPart
+        fields = ('name',)

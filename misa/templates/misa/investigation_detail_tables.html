@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block sb_admin_title %}ISA Project Details{% endblock sb_admin_title %}
-{% block sb_admin_subheading %} <small></small> {% endblock sb_admin_subheading %}
+{% block sb_admin_title %}ISA Project Details:{% endblock sb_admin_title %}
+{% block sb_admin_subheading %} <small> {{ investigation.name }} </small> {% endblock sb_admin_subheading %}
 {% block sb_admin_breadcrumb %}
     <a href="{% url "index" %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
     /
@@ -23,19 +23,30 @@
     {% load querystring from django_tables2 %}
     {% load bootstrap3 %}
 
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><b>Investigation - </b> <span class="text-muted"> {{ investigation.name }}</span></h3>
-                </div>
-                <div class="panel-body">
-                    <p>id: {{ investigation.pk }}</p>
-                    <p>{{ investigation.description |safe }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+
+    <p class="mb-0">
+                    <table class="table table-bordered">
+                        <thead>
+                        </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>Investigation id:</b></td>
+                                    <td>{{ investigation.pk }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Name:</b></td>
+                                    <td>{{ investigation.name }}</td>
+                                </tr>
+                                <tr>
+                                   <td><b>Description:</b></td>
+                                    <td>{{ investigation.description |safe }}</td>
+                                </tr>
+                        </tbody>
+                    </table>
+    </p>
+
+<hr>
+
     <form name="filterform"  action="" method="get" class="form form-inline">
     {% for s, table, filter in list %}
         <div class="row">
@@ -47,15 +58,10 @@
                     <div class="panel-body">
 
 
-                            <p>id: {{s.pk}}</p>
-                            <p>name: {{ s.name }}</p>
-                            <p>{{ s.description |safe }}</p>
 
-                            {% if s.dmastudy %}
-                                <p>Type of study: DMA</p>
-                            {% else %}
-                                <p>Type of study: metabolomics</p>
-                            {% endif %}
+
+
+
                         <div class="row" >
 
                             <div class="col-lg-8">
@@ -85,6 +91,60 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row" >
+
+                            <div class="col-lg-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title"><b>Study details</b></h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><b>Study id:</b></td>
+                                                    <td>{{s.pk}}</td>
+                                                    <td><b>name:</b></td>
+                                                    <td>{{ s.name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Description:</b></td>
+                                                    <td>{{ s.description |safe }}</td>
+                                                    <td><b>Grant number:</b></td>
+                                                    <td>{{ s.grant_number |safe }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>Submission date:</b></td>
+                                                    <td>{{ s.submission_date |safe }}</td>
+                                                    <td><b>Public release date:</b></td>
+                                                    <td>{{ s.public_release_date |safe }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" >
+                            <div class="col-lg-4">
+
+                                    <div class="list-group">
+                                        <a href="{% url "supdate" s.id %}" class="list-group-item">Update study details</a>
+                                        <a href="{% url "sdelete" s.id %}" class="list-group-item">Delete study</a>
+                                    </div>
+
+                            </div>
+                        </div>
+
+
+
+
+
                     </div>
                 </div>
             </div>
