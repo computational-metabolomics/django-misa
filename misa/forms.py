@@ -31,6 +31,7 @@ from mbrowse.forms import UploadMFilesBatchForm
 from mbrowse.utils.mfile_upload import get_pths_from_field
 from dal import autocomplete
 
+
 class AssayDetailForm(forms.ModelForm):
 
     class Meta:
@@ -141,16 +142,29 @@ class SearchOntologyTermForm(forms.Form):
     search_term = forms.CharField()
 
 
+class StudySampleBatchCreateForm(forms.Form):
+
+    study = forms.ModelChoiceField(queryset=Study.objects.all(), widget=autocomplete.ModelSelect2(url='study-autocomplete'))
+    sample_list = forms.FileField()
+    replace_duplicates = forms.BooleanField(required=False,
+                                            help_text='If there is already a study sample with the same name for the '
+                                                      'selected Study. Flag this option to remove the old sample '
+                                                      'and replace with the one detailed in the new file. If this '
+                                                      'option is not flagged the duplicate samples will be ignored')
+
+
 class StudySampleForm(forms.ModelForm):
 
     class Meta:
         model = StudySample
-        fields = ('__all__')
+        fields = ('study', 'sample_name', 'studyfactor', 'organism', 'organism_part', 'sampletype',)
         widgets = {
+            'study': autocomplete.ModelSelect2(url='study-autocomplete'),
             'organism': autocomplete.ModelSelect2(url='organism-autocomplete'),
             'organism_part': autocomplete.ModelSelect2(url='organismpart-autocomplete'),
+            'studyfactor': autocomplete.ModelSelect2Multiple(url='studyfactor-autocomplete'),
+            'sampletype': autocomplete.ModelSelect2(url='sampletype-autocomplete'),
         }
-
 
 
 class StudyFactorForm(forms.ModelForm):
@@ -159,18 +173,20 @@ class StudyFactorForm(forms.ModelForm):
         model = StudyFactor
         fields = ('__all__')
         widgets = {
+            'study': autocomplete.ModelSelect2(url='study-autocomplete'),
             'ontologyterm_type': autocomplete.ModelSelect2(url='ontologyterm-autocomplete'),
             'ontologyterm_value': autocomplete.ModelSelect2(url='ontologyterm-autocomplete'),
             'ontologyterm_unit': autocomplete.ModelSelect2(url='ontologyterm-autocomplete')
         }
 
-class StudyForm(forms.ModelForm):
 
+class StudyForm(forms.ModelForm):
 
     class Meta:
         model = Study
         fields = ('__all__')
         widgets = {
+            'investigation': autocomplete.ModelSelect2(url='investigation-autocomplete'),
             'submission_date': forms.widgets.DateInput(attrs={'type': 'date'}),
             'public_release_date':  forms.widgets.DateInput(attrs={'type': 'date'}),
 
@@ -187,6 +203,7 @@ class OrganismForm(forms.ModelForm):
             'ontologyterm': autocomplete.ModelSelect2(url='ontologyterm-autocomplete')
         }
 
+
 class OrganismPartForm(forms.ModelForm):
     class Meta:
         model = OrganismPart
@@ -194,7 +211,6 @@ class OrganismPartForm(forms.ModelForm):
         widgets = {
             'ontologyterm': autocomplete.ModelSelect2(url='ontologyterm-autocomplete')
         }
-
 
 
 class ChromatographyProtocolForm(forms.ModelForm):
@@ -213,6 +229,7 @@ class ChromatographyTypeForm(forms.ModelForm):
         widgets = {
             'ontologyterm': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete')
         }
+
 
 class MeasurementTechniqueForm(forms.ModelForm):
     class Meta:
@@ -272,6 +289,7 @@ class SampleCollectionProtocolForm(forms.ModelForm):
     class Meta:
         model = SampleCollectionProtocol
         fields = ('__all__')
+
 
 class DataTransformationProtocolForm(forms.ModelForm):
     class Meta:

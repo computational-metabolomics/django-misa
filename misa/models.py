@@ -20,16 +20,15 @@ def json_file_upload(process, filename):
 class OntologyTerm(models.Model):
     name = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    ontology_id = models.TextField(null=True, blank=True)
+    ontology_id = models.CharField(max_length=200, unique=True)
     iri = models.TextField(blank=True, null=True)
     obo_id = models.CharField(max_length=200, blank=True, null=True)
     ontology_name = models.CharField(max_length=200, blank=True, null=True)
     ontology_prefix = models.CharField(max_length=200, blank=True, null=True)
-    short_form = models.CharField(max_length=200, blank=True, null=True)
+    short_form = models.CharField(max_length=200, unique=True)
     type = models.CharField(max_length=200, blank=True, null=True)
 
-    def __str__(self):
-        return '{} {}'.format(self.name, self.short_form)
+
 
 ONTOLOGY_ADD_HELP = mark_safe("If the ontology term is not available, please "
                              " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>.")
@@ -103,7 +102,7 @@ class MISAFile(GenericFile):
 class Study(models.Model):
     investigation = models.ForeignKey(Investigation, on_delete=models.CASCADE)
     description = models.TextField(help_text='Study description')
-    dmastudy = models.BooleanField()
+    dmastudy = models.BooleanField(default=False)
     name = models.CharField(max_length=100, blank=False, null=False, help_text='e.g. the study identifier')
     title = models.CharField(max_length=100, blank=True, null=True)
     grant_number = models.CharField(max_length=100, blank=True, null=True)
@@ -125,34 +124,36 @@ class Study(models.Model):
 
 
 class StudyFactor(models.Model):
-    ontologyterm_type = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True,
+    ontologyterm_type = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=False, default='na',
                                           help_text=mark_safe("The type for the value e.g. gene knockout, "
                                                               "concentration unit, etc"
                                                               " If the ontology term is not available please "
                                                               " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
                                           verbose_name='Study Factor Type',
                                           related_name='ontologyterm_type')
-    ontologyterm_value = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True, blank=True,
+    ontologyterm_value = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=False, default='na',
                                             help_text=mark_safe("The value, e.g. if  wild type,"
                                                         "If the ontology term is not available please "
                                                     " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
                                                     verbose_name='Study Factor Value (ontology term',
                                            related_name='ontologyterm_value')
 
-    value = models.CharField(max_length=100, blank=True, null=True,
+    value = models.CharField(max_length=100, null=False, default='na',
                              verbose_name='Study Factor Value (non ontology term)',
                             help_text='If no appropriate ontological term for the value, then add free text here')
 
-    ontologyterm_unit = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True, blank=True,
+    ontologyterm_unit = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=False, default='na',
                                                       help_text=mark_safe("If the value has a unit, find an appropiate ontology term"),
                                                     verbose_name='Study Factor Unit', related_name='ontologyterm_unit')
 
     def __str__(self):              # __unicode__ on Python 2
         if self.ontologyterm_value:
-            return 'type: {}, value {}'.format(self.ontologyterm_type, self.ontologyterm_value)
+            return '{}: {}'.format(self.ontologyterm_type, self.ontologyterm_value)
         else:
-            return 'type: {}, value {}'.format(self.ontologyterm_type, self.value)
+            return '{}: {}'.format(self.ontologyterm_type, self.value)
 
+    class Meta:
+        unique_together = (("ontologyterm_type", "ontologyterm_value", "value", "ontologyterm_unit"),)
 
 
 
@@ -163,9 +164,12 @@ class SampleType(models.Model):
     def __str__(self):              # __unicode__ on Python 2
         return self.type
 
+
 class StudySample(models.Model):
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
-    sample_name = models.CharField(max_length=200)
+    sample_name = models.CharField(max_length=200, help_text='The sample name has to unique for each study')
+    source_name = models.CharField(max_length=200, null=True, blank=True,
+                                    help_text="The source of the sample")
     studyfactor = models.ManyToManyField(StudyFactor, blank=True,
                                          help_text= mark_safe("If factor not available then please  "
                                          " <a target='_blank' href='/misa/sfcreate/'>add</a>.")
@@ -194,7 +198,7 @@ class StudySample(models.Model):
 
     @property
     def all_studyfactors(self):
-        return ' | '.join([str(x) for x in self.studyfactor.all()])
+        return '<ul>{}</ul>'.format(''.join(['<li> {}'.format(str(x)) for x in self.studyfactor.all()]))
 
     class Meta:
         unique_together = (("sample_name", "study"),)
@@ -402,13 +406,13 @@ class AssayDetail(models.Model):
         unique_together = (("code_field", "assay"),)
 
     def save(self, *args, **kwargs):
-        sampletype = self.studysample.sample_name
-        extraction = self.extractionprocess.extractionprotocol.extractiontype.type
-        spe = self.speprocess.speprotocol.spetype.type
+        sampletype = self.studysample.sampletype
+        extraction = self.extractionprocess.extractionprotocol.code_field
+        spe = self.speprocess.speprotocol.code_field
         spefrac = self.speprocess.spefrac
-        lc = self.chromatographyprocess.chromatographyprotocol.chromatographytype.type
+        lc = self.chromatographyprocess.chromatographyprotocol.code_field
         lcfrac = self.chromatographyprocess.chromatographyfrac
-        measurement =self.measurementprocess.measurementprotocol.measurementtechnique.type
+        measurement =self.measurementprocess.measurementprotocol.code_field
         pol = self.measurementprocess.polaritytype.type
 
         self.code_field = '{}_{}_{}_{}_{}_{}_{}_{}'.format(

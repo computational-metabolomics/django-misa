@@ -23,6 +23,7 @@ from misa.models import (
     OrganismPart,
 
 )
+from django.utils.safestring import mark_safe
 from django_tables2_column_shifter.tables import ColumnShiftTable
 from gfiles.models import GenericFile
 from django_tables2.utils import A
@@ -342,17 +343,28 @@ class DataTransformationProtocolTable(tables.Table):
         template = 'django_tables2/bootstrap.html'
 
 
+class MarkSafeLinkColumn(tables.LinkColumn):
+    def render(self, value, record, bound_column):
+        return self.render_link(
+            self.compose_url(record, bound_column),
+            record=record,
+            value=mark_safe(value)
+        )
+
+
 
 class StudySampleTable(tables.Table):
 
     investigation = tables.Column(accessor='study.investigation.name', verbose_name='Investigation')
     study = tables.Column(accessor='study.name', verbose_name='Study')
-    all_studyfactors = tables.LinkColumn('sflist', verbose_name='Study Factors')
+    all_studyfactors = MarkSafeLinkColumn('sflist', verbose_name='Study Factors')
     organism = tables.LinkColumn('org_list')
     organism_part = tables.LinkColumn('orgpart_list')
 
     update = tables.LinkColumn('ssam_update', text='update', verbose_name='Update', args=[A('id')])
     delete = tables.LinkColumn('ssam_delete', text='delete', verbose_name='Delete', args=[A('id')])
+
+
     class Meta:
         model = StudySample
         attrs = {'class': 'paleblue'}
@@ -381,10 +393,11 @@ class OrganismTable(tables.Table):
         template = 'django_tables2/bootstrap.html'
 
 
+
 class OrganismPartTable(tables.Table):
 
-    update = tables.LinkColumn('org_update', text='update', verbose_name='Update', args=[A('id')])
-    delete = tables.LinkColumn('org_delete', text='delete', verbose_name='Delete', args=[A('id')])
+    update = tables.LinkColumn('orgpart_update', text='update', verbose_name='Update', args=[A('id')])
+    delete = tables.LinkColumn('orgpart_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = OrganismPart
         attrs = {'class': 'paleblue'}

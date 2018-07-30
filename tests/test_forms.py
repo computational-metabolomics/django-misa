@@ -31,21 +31,21 @@ class AssayDetailFormTestCase(TestCase):
         assay = Assay.objects.filter(description='P_WAX[1]_PHE[0]_LC-MS_LC-MSMS')[0]
         ss = StudySample.objects.filter(sample_name='BLANK')[0]
 
-        ei = ExtractionProcess(extractionprotocol=ExtractionProtocol.objects.filter(code_field='P')[0])
+        ei = ExtractionProcess(extractionprotocol=ExtractionProtocol.objects.filter(code_field='DOM')[0])
         ei.save()
 
         # Create SPE process
-        spei = SpeProcess(spefrac=2, speprotocol=SpeProtocol.objects.filter(code_field='WAX')[0])
+        spei = SpeProcess(spefrac=2, speprotocol=SpeProtocol.objects.filter(code_field='DOM')[0])
         spei.save()
 
         # Create chromtography process
         ci = ChromatographyProcess(chromatographyfrac=0,
                                     chromatographyprotocol=ChromatographyProtocol.objects.filter(
-                                        code_field='PHE')[0])
+                                        code_field='SFRP')[0])
         ci.save()
 
         # create measurement process
-        mi = MeasurementProcess(measurementprotocol=MeasurementProtocol.objects.filter(code_field='LC-MS')[0],
+        mi = MeasurementProcess(measurementprotocol=MeasurementProtocol.objects.filter(code_field='FT-ICR')[0],
                                  polaritytype=PolarityType.objects.filter(type='POSITIVE')[0])
         mi.save()
 
@@ -57,16 +57,60 @@ class AssayDetailFormTestCase(TestCase):
                    'measurementprocess': mi.id}
 
         form = AssayDetailForm(data_in)
-
-        form = AssayDetailForm(data_in)
         self.assertTrue(form.is_valid())
 
         ad = form.save()
 
         self.assertEqual(ad.chromatographyprocess.chromatographyfrac, 0)
         self.assertEqual(ad.speprocess.spefrac, 2)
-        self.assertEqual(ad.code_field, 'BLANK_P_WAX_2_PHE_0_LC-MS_POSITIVE')
-        self.assertIs(len(AssayDetail.objects.all()), 7)
+        self.assertEqual(ad.code_field, 'BLANK_DOM_DOM_2_SFRP_0_FT-ICR_POSITIVE')
+        self.assertIs(len(AssayDetail.objects.all()), 5)
+
+
+    # def test_form_submission_dma(self):
+    #     """
+    #     Test to check unit testing running
+    #     """
+    #     #Using a model form as a validator that is not a HTTP request (as per page 165 of Two Scoops of Django 1.11
+    #     assay = Assay.objects.filter(description='P_WAX[1]_PHE[0]_LC-MS_LC-MSMS')[0]
+    #     ss = StudySample.objects.filter(sample_name='BLANK')[0]
+    #
+    #     ei = ExtractionProcess(extractionprotocol=ExtractionProtocol.objects.filter(code_field='P')[0])
+    #     ei.save()
+    #
+    #     # Create SPE process
+    #     spei = SpeProcess(spefrac=2, speprotocol=SpeProtocol.objects.filter(code_field='WAX')[0])
+    #     spei.save()
+    #
+    #     # Create chromtography process
+    #     ci = ChromatographyProcess(chromatographyfrac=0,
+    #                                 chromatographyprotocol=ChromatographyProtocol.objects.filter(
+    #                                     code_field='PHE')[0])
+    #     ci.save()
+    #
+    #     # create measurement process
+    #     mi = MeasurementProcess(measurementprotocol=MeasurementProtocol.objects.filter(code_field='LC-MS')[0],
+    #                              polaritytype=PolarityType.objects.filter(type='POSITIVE')[0])
+    #     mi.save()
+    #
+    #     data_in = {'assay': assay.id,
+    #                'studysample': ss.id,
+    #                'extractionprocess': ei.id,
+    #                'speprocess': spei.id,
+    #                'chromatographyprocess': ci.id,
+    #                'measurementprocess': mi.id}
+    #
+    #     form = AssayDetailForm(data_in)
+    #
+    #     form = AssayDetailForm(data_in)
+    #     self.assertTrue(form.is_valid())
+    #
+    #     ad = form.save()
+    #
+    #     self.assertEqual(ad.chromatographyprocess.chromatographyfrac, 0)
+    #     self.assertEqual(ad.speprocess.spefrac, 2)
+    #     self.assertEqual(ad.code_field, 'BLANK_P_WAX_2_PHE_0_LC-MS_POSITIVE')
+    #     self.assertIs(len(AssayDetail.objects.all()), 7)
 
 
 # class UploadAssayDataFilesFormTestCase(TestCase):

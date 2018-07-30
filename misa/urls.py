@@ -114,12 +114,14 @@ urlpatterns = [
     url(r'^iupdate/(?P<pk>\d+)/$', views.InvestigationUpdateView.as_view(), name='iupdate'),
     url(r'^idetail/(?P<pk>\d+)/$', views.InvestigationDetailView.as_view(), name='idetail'),
     url(r'^idetail_tables/(?P<pk>\d+)/$', views.InvestigationDetailTablesView.as_view(), name='idetail_tables'),
+    url(r'^investigation-autocomplete/$', views.InvestigationAutocomplete.as_view(), name='investigation-autocomplete'),
 
     # Study
     url(r'^screate/$', views.StudyCreateView.as_view(), name='screate'),
     url(r'^supdate/(?P<pk>\d+)/$', views.StudyUpdateView.as_view(), name='supdate'),
     url(r'^sdelete/(?P<pk>[\w]+)/$', views.StudyDeleteView.as_view(), name='sdelete'),
     url(r'^slist/$', views.StudyListView.as_view(), name='slist'),
+    url(r'^study-autocomplete/$', views.StudyAutocomplete.as_view(), name='study-autocomplete'),
 
     # Assay
     url(r'^acreate/$', views.AssayCreateView.as_view(), name='acreate'),
@@ -131,12 +133,17 @@ urlpatterns = [
     url(r'^ssam_update/(?P<pk>\d+)/$', views.StudySampleUpdateView.as_view(), name='ssam_update'),
     url(r'^ssam_list/$', views.StudySampleListView.as_view(), name='ssam_list'),
     url(r'^ssam_delete/(?P<pk>[\w]+)/$', views.StudySampleListView.as_view(), name='ssam_delete'),
+    url(r'^ssam_batch_create/$', views.StudySampleBatchCreate.as_view(), name='ssam_batch_create'),
+    url(r'^sampletype-autocomplete/$', views.SampleTypeAutocomplete.as_view(), name='sampletype-autocomplete'),
+
 
     # Study Factor
     url(r'^sfcreate/$', views.StudyFactorCreateView.as_view(), name='sfcreate'),
     url(r'^sfupdate/(?P<pk>\d+)/$', views.StudyFactorUpdateView.as_view(), name='sfupdate'),
     url(r'^sfdelete/(?P<pk>\d+)/$', views.StudyFactorDeleteView.as_view(), name='sfdelete'),
     url(r'^sflist/$', views.StudyFactorListView.as_view(), name='sflist'),
+    url(r'^studyfactor-autocomplete/$', views.StudyFactorAutocomplete.as_view(), name='studyfactor-autocomplete'),
+
 
     url(r'^upload_assay_data_files/(?P<assayid>\d+)$', views.UploadAssayDataFilesView.as_view(), name='upload_assay_data_files'),
 

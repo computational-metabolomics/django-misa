@@ -15,6 +15,8 @@ from django.views.generic import CreateView, DetailView, DeleteView, UpdateView,
 from django_tables2 import RequestConfig
 from django.urls import reverse_lazy
 
+from misa.utils.sample_batch_create import sample_batch_create
+
 from django_tables2.views import SingleTableMixin
 from django_filters.views import FilterView
 from dal import autocomplete
@@ -29,6 +31,7 @@ from misa.models import (
     Study,
     StudySample,
     StudyFactor,
+    SampleType,
     OntologyTerm,
     OrganismPart,
     Organism,
@@ -42,6 +45,7 @@ from misa.models import (
     SpeType,
     SampleCollectionProtocol,
     DataTransformationProtocol,
+
 
 )
 
@@ -64,6 +68,7 @@ from misa.forms import (
     SpeTypeForm,
     SampleCollectionProtocolForm,
     DataTransformationProtocolForm,
+    StudySampleBatchCreateForm
 )
 
 from misa.utils.isa_upload import upload_assay_data_files_zip
@@ -626,13 +631,17 @@ class InvestigationDetailView(LoginRequiredMixin, DetailView):
     fields = '__all__'
 
 
+class InvestigationAutocomplete(OntologyTermAutocomplete):
+    model_class = Investigation
+
+
 class InvestigationDetailTablesView(LoginRequiredMixin, View):
     '''
     Run a registered workflow
     '''
 
     template_name = 'misa/investigation_detail_tables.html'
- 
+
 
     def get_queryset(self):
         return Investigation.objects.get(pk=self.kwargs['pk'])
@@ -649,36 +658,45 @@ class InvestigationDetailTablesView(LoginRequiredMixin, View):
 
         investigation = self.get_queryset()
 
-        tables = []
-        filters = []
+        atables = []
+        afilters = []
+
+        stables = []
+        sfilters = []
+
         studies = []
         c = 0
         # loop through all the data_inputs from the associated workflow
         for s in investigation.study_set.all():
+            assay_track = 'assay{}'.format(c)
+            sample_track = 'sample{}'.format(c)
 
             assays = s.assay_set.all()
 
-            # Create an invidivual filter for each table
-            f = AssayFilter(request.GET, queryset=assays, prefix=c)
+            # Create an invidivual filter for each table (assays)
+            af = AssayFilter(request.GET, queryset=assays, prefix=c)
 
-            # Create a checkbox column for each table, so that the javascript can see which checkbox has been
-            # selected
-            # create a new table with the custom column
-            table = AssayTable(f.qs, prefix=c, attrs={'name': c, 'id': c, 'class': 'paleblue'})
-
+            atable = AssayTable(af.qs, prefix=c, attrs={'name': assay_track, 'id': assay_track, 'class': 'paleblue'})
             # load the table into the requestconfig
-            rc.configure(table)
+            rc.configure(atable)
+
+            # Create an invidivual filter for each table (samples)
+            sf = StudySampleFilter(request.GET, queryset=s.studysample_set.all(), prefix=c+1)
+            stable = StudySampleTable(sf.qs, prefix=c, attrs={'name': sample_track, 'id': sample_track, 'class': 'paleblue'})
+            # load the table into the requestconfig
+            rc.configure(stable)
 
             # add the tables and filters to the list used in the template
-            tables.append(table)
-            filters.append(f)
+            atables.append(atable)
+            afilters.append(af)
+            stables.append(stable)
+            sfilters.append(sf)
             studies.append(s)
 
-
-            c+=1
+            c+=2
 
         # create a list of all the information. Using a simple list format as it is just easy to use in the template
-        l = zip(studies, tables, filters)
+        l = zip(studies, atables, afilters, stables, sfilters)
         return l, investigation
 
 
@@ -729,11 +747,15 @@ class StudyListView(LoginRequiredMixin, ListView):
     model = Study
     fields = '__all__'
 
+
 class StudyDeleteView(DeleteView):
     model = Study
     success_url = reverse_lazy('ilist')
     template_name = 'misa/confirm_delete.html'
 
+
+class StudyAutocomplete(OntologyTermAutocomplete):
+    model_class = Study
 
 
 ############################################################################################
@@ -753,7 +775,6 @@ class AssayUpdateView(LoginRequiredMixin, UpdateView):
 class AssayListView(LoginRequiredMixin, ListView):
     model = Assay
     fields = '__all__'
-
 
 
 class UploadAssayDataFilesView(LoginRequiredMixin, View):
@@ -842,6 +863,30 @@ class StudySampleListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     template_name = 'misa/study_sample_list.html'
 
 
+class StudySampleBatchCreate(LoginRequiredMixin, View):
+
+    success_msg = "batch of samples created"
+    # initial = {'key': 'value'}
+    template_name = 'misa/study_sample_batch_create.html'
+
+    def get(self, request, *args, **kwargs):
+        form = StudySampleBatchCreateForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = StudySampleBatchCreateForm(request.POST, request.FILES)
+
+        if form.is_valid():
+
+            study = form.cleaned_data['study']
+            sample_list = form.cleaned_data['sample_list']
+            replace_duplicates = form.cleaned_data['replace_duplicates']
+            sample_batch_create(study, sample_list, replace_duplicates)
+
+            return redirect('ssam_list')
+
+        return render(request, self.template_name, {'form': form})
+
 
 ############################################################################################
 # Study factor views
@@ -863,6 +908,7 @@ class StudyFactorDeleteView(DeleteView):
     success_url = reverse_lazy('sflist')
     template_name = 'misa/confirm_delete.html'
 
+
 class StudyFactorListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     table_class = StudyFactorTable
     model = StudyFactor
@@ -870,6 +916,11 @@ class StudyFactorListView(LoginRequiredMixin, SingleTableMixin, FilterView):
     template_name = 'misa/study_factor_list.html'
 
 
+class StudyFactorAutocomplete(OntologyTermAutocomplete):
+    model_class = StudyFactor
+
+class SampleTypeAutocomplete(OntologyTermAutocomplete):
+    model_class = SampleType
 
 
 
