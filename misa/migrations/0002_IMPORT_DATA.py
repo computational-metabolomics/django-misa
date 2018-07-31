@@ -47,7 +47,7 @@ def forwards_func(apps, schema_editor):
     terms = ['NCIT_C49019', 'NCIT_C61575', 'SIO_001046', 'SIO_001047', 'CHEMINF_000070', 'CHMO_0002302',
              'CHMO_0002262', 'CHMO_0002269', 'CO_356:3000142', 'CHMO_0002658', 'CHMO_0002804', 'NCIT_C16631',
              'NCIT_C43366', 'NCIT_C14182', 'NCIT_C62195', 'NCIT_C25360', 'NCIT_C61299', 'NCIT_C25301', 'NCIT_C25207',
-             'NCBITaxon_35128',  'NCIT_C13413', 'NCBITaxon_35525', 'NCBITaxon_6669', 'SIO_001047']
+             'NCBITaxon_35128',  'NCIT_C13413', 'NCBITaxon_35525', 'NCBITaxon_6669', 'SIO_001047' 'OMIT_0025161']
 
 
     [check_and_create_ontology(term, db_alias, False) for term in terms]
@@ -136,11 +136,11 @@ def forwards_func(apps, schema_editor):
     # SPE types
     spe_type1 = SpeType(type="PPL", description="Polymer type sorbents")
     spe_type1.save(using=db_alias)
-    spe_type1.ontologyterm.add(OntologyTerm.objects.filter(name='SPE')[0])
+    # spe_type1.ontologyterm.add(OntologyTerm.objects.filter(short_form='OMIT_0025161')[0])
 
     spe_type2 = SpeType(type="Weak anion-exchange", description="Weak anion-exchange solid phase extraction")
     spe_type2.save(using=db_alias)
-    spe_type2.ontologyterm.add(OntologyTerm.objects.filter(name='SPE')[0])
+    # spe_type2.ontologyterm.add(OntologyTerm.objects.filter(short_form='OMIT_0025161')[0])
     spe_type2.ontologyterm.add(OntologyTerm.objects.filter(name='weak anion-exchange column')[0])
 
     spe_protocol = SpeProtocol(name="SPE-DOM (PPL)",
