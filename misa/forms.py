@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, print_function
 import os
 import csv
-
+from io import TextIOWrapper
 from django import forms
 
 from misa.models import (
@@ -107,7 +107,8 @@ class UploadAssayDataFilesForm(UploadMFilesBatchForm):
             msg = 'The mapping file is required when using the zip option'
             raise forms.ValidationError(msg)
         else:
-            mapping_l = list(csv.DictReader(data_mappingfile))
+
+            mapping_l = list(csv.DictReader(TextIOWrapper(data_mappingfile, encoding='ascii', errors='replace')))
 
         missing_files = file_upload_mapping_match(filelist, mapping_l)
         missing_files = [os.path.basename(f) for f in missing_files]

@@ -6,7 +6,7 @@
 {% block sb_admin_breadcrumb %}
     <a href="{% url "index" %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
     / <a href="{% url "ilist" %}"></i> ISA Summary </a>
-    / <a href="{% url "idetail" investigation_id %}"></i> ISA Project Details </a>
+    / <a href="{% url "idetail_tables" investigation_id %}"></i> ISA Project Details </a>
 
 {% endblock sb_admin_breadcrumb %}
 {% block sb_admin_breadcrumb_active %} / Assay Details {% endblock sb_admin_breadcrumb_active %}

@@ -12,8 +12,8 @@ from mbrowse.models import Polarity
 from mbrowse.utils.mfile_upload import add_runs_mfiles_filelist
 
 from misa.models import Study, AssayDetail, AssayRun
-from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol
-from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, MeasurementProcess
+from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol, SampleCollectionProtocol
+from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, MeasurementProcess, SampleCollectionProcess
 from misa.models import StudySample
 from misa.models import PolarityType
 
@@ -66,11 +66,13 @@ def map_run_to_assaydetail(runs, mappingd):
 
 
 def get_mapping_d(mapping_l, assayid, create_assay_details=False):
-    qs = AssayDetail.objects.filter(assay_id=assayid)
+
 
 
     mapping_d = {}
     for row in mapping_l:
+        # update each time
+        qs = AssayDetail.objects.filter(assay_id=assayid)
         fn = row['filename']
         if not fn:
             continue
@@ -97,6 +99,9 @@ def search_assay_detail(row, qs):
 
 def create_assay_detail(row, assayid):
     from misa.forms import AssayDetailForm
+    sc = SampleCollectionProcess(samplecollectionprotocol=SampleCollectionProtocol.objects.get(code_field=row['sample_collection']))
+    sc.save()
+
     cfrac, spefrac = frac2numbers(row)
     ei = ExtractionProcess(extractionprotocol=ExtractionProtocol.objects.get(code_field=row['extraction']))
     ei.save()
@@ -120,6 +125,7 @@ def create_assay_detail(row, assayid):
 
     data_in = {'assay': assayid,
                'studysample': ss.id,
+               'samplecollectionprocess': sc.id,
                'extractionprocess': ei.id,
                'speprocess': spei.id,
                'chromatographyprocess': ci.id,
@@ -148,7 +154,8 @@ def frac2numbers(row):
 def row_2_codefield(row):
     cfrac, spefrac = frac2numbers(row)
 
-    return '{}_{}_{}_{}_{}_{}_{}_{}'.format(row['sample'],
+    return '{}_{}_{}_{}_{}_{}_{}_{}'.format(      row['sample'],
+                                                  row['sample_collection'],
                                                   row['extraction'],
                                                   row['spe'],
                                                   spefrac,

@@ -1,7 +1,6 @@
 include LICENSE
 include README.rst
-include requirements_py27.txt
+include requirements.txt
+recursive-include tests *
 recursive-include misa/static *
 recursive-include misa/templates *
-recursive-include misa/tests/data *
-recursive-include misa/tests *

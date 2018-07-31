@@ -28,6 +28,8 @@ class OntologyTerm(models.Model):
     short_form = models.CharField(max_length=200, unique=True)
     type = models.CharField(max_length=200, blank=True, null=True)
 
+    def __str__(self):              # __unicode__ on Python 2
+        return '{}'.format(self.name)
 
 
 ONTOLOGY_ADD_HELP = mark_safe("If the ontology term is not available, please "
@@ -124,27 +126,29 @@ class Study(models.Model):
 
 
 class StudyFactor(models.Model):
-    ontologyterm_type = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=False, default='na',
+    ontologyterm_type = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True, blank=True,
                                           help_text=mark_safe("The type for the value e.g. gene knockout, "
                                                               "concentration unit, etc"
                                                               " If the ontology term is not available please "
                                                               " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
                                           verbose_name='Study Factor Type',
                                           related_name='ontologyterm_type')
-    ontologyterm_value = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=False, default='na',
+    ontologyterm_value = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True, blank=True,
                                             help_text=mark_safe("The value, e.g. if  wild type,"
                                                         "If the ontology term is not available please "
                                                     " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."),
                                                     verbose_name='Study Factor Value (ontology term',
                                            related_name='ontologyterm_value')
 
-    value = models.CharField(max_length=100, null=False, default='na',
+    value = models.CharField(max_length=100, null=True, blank=True,
                              verbose_name='Study Factor Value (non ontology term)',
                             help_text='If no appropriate ontological term for the value, then add free text here')
 
-    ontologyterm_unit = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=False, default='na',
+    ontologyterm_unit = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE, null=True, blank=True,
                                                       help_text=mark_safe("If the value has a unit, find an appropiate ontology term"),
                                                     verbose_name='Study Factor Unit', related_name='ontologyterm_unit')
+
+    full_name = models.CharField(max_length=200, null=True, blank=True, unique=True)
 
     def __str__(self):              # __unicode__ on Python 2
         if self.ontologyterm_value:
@@ -152,8 +156,9 @@ class StudyFactor(models.Model):
         else:
             return '{}: {}'.format(self.ontologyterm_type, self.value)
 
-    class Meta:
-        unique_together = (("ontologyterm_type", "ontologyterm_value", "value", "ontologyterm_unit"),)
+    def save(self, *args, **kwargs):
+        self.full_name = '{}: {} {}'.format(self.ontologyterm_type, self.ontologyterm_value, self.value)
+        super(StudyFactor, self).save(*args, **kwargs)
 
 
 
@@ -302,7 +307,7 @@ class SampleCollectionProtocol(Protocol):
 
 
 class SampleCollectionProcess(models.Model):
-    samplecollectionprocess = models.ForeignKey(SampleCollectionProtocol, on_delete=models.CASCADE)
+    samplecollectionprotocol = models.ForeignKey(SampleCollectionProtocol, on_delete=models.CASCADE)
     details = models.CharField(max_length=300, null=True, blank=True)
 
 
@@ -393,6 +398,7 @@ class AssayDetail(models.Model):
                                   validators=[validate_workflow_code])
 
     studysample = models.ForeignKey(StudySample, on_delete=models.CASCADE)
+    samplecollectionprocess = models.ForeignKey(SampleCollectionProcess, on_delete=models.CASCADE)
     extractionprocess = models.ForeignKey(ExtractionProcess, on_delete=models.CASCADE)
     speprocess = models.ForeignKey(SpeProcess, on_delete=models.CASCADE)
     chromatographyprocess = models.ForeignKey(ChromatographyProcess, on_delete=models.CASCADE)
@@ -406,17 +412,17 @@ class AssayDetail(models.Model):
         unique_together = (("code_field", "assay"),)
 
     def save(self, *args, **kwargs):
-        sampletype = self.studysample.sampletype
+        samplename = self.studysample.sample_name
+        samplecollection = self.samplecollectionprocess.samplecollectionprotocol.code_field
         extraction = self.extractionprocess.extractionprotocol.code_field
         spe = self.speprocess.speprotocol.code_field
         spefrac = self.speprocess.spefrac
         lc = self.chromatographyprocess.chromatographyprotocol.code_field
         lcfrac = self.chromatographyprocess.chromatographyfrac
-        measurement =self.measurementprocess.measurementprotocol.code_field
+        measurement = self.measurementprocess.measurementprotocol.code_field
         pol = self.measurementprocess.polaritytype.type
 
-        self.code_field = '{}_{}_{}_{}_{}_{}_{}_{}'.format(
-                            sampletype, extraction, spe, spefrac, lc, lcfrac, measurement, pol)
+        self.code_field = '{}_{}_{}_{}_{}_{}_{}_{}_{}'.format(samplename, samplecollection, extraction, spe, spefrac, lc, lcfrac, measurement, pol)
         super(AssayDetail, self).save(*args, **kwargs)
 
 

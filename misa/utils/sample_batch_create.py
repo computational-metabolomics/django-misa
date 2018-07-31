@@ -11,7 +11,7 @@ def check_and_create_model(name, model_to_check, db_alias=''):
     # check if we have the organism
     # if we do return the pk
 
-    qs = model_to_check.objects.filter(name=name)
+    qs = model_to_check.objects.filter(ontologyterm__name=name)
 
     if qs:
         return qs[0]
@@ -21,6 +21,7 @@ def check_and_create_model(name, model_to_check, db_alias=''):
     ont_ids = check_and_create_ontology(name, db_alias=db_alias)
 
     ob = model_to_check(ontologyterm_id=ont_ids[0])
+    ob.name = ob.ontologyterm.name
 
     if db_alias:
         ob.save(using=db_alias)
@@ -107,14 +108,14 @@ def sample_batch_create(study, sample_list, replace_duplicates=False):
                 }
 
             if fc:
-                match_unit = re.match('(?:Unit|factor_\[.*\]_\[unit\])', col)
+                match_unit = re.match('(?:Unit|factor_\[.*\]_unit)$', col)
                 if match_unit:
                     idxs['study_factors'][fc]['unit'] = i
 
 
     for row in reader:
         # get organism and check if we have relevant ontology (if not add best match)
-        organism = check_and_create_model(row[idxs['organism']], OrganismPart)
+        organism = check_and_create_model(row[idxs['organism']], Organism)
         # same for organism type
         organism_part = check_and_create_model(row[idxs['organism_part']], OrganismPart)
 
@@ -136,6 +137,7 @@ def sample_batch_create(study, sample_list, replace_duplicates=False):
             sf = check_and_create_study_factor(v['type'],
                                                               row[v['value']],
                                                               row[v['unit']] if v['unit'] else '')
+            studyfactors.append(sf)
 
         # # Create (or replace) Study samples with details
         study_samples_present = StudySample.objects.filter(study=study, sample_name=row[idxs['sample_name']])

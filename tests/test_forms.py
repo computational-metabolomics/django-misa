@@ -8,8 +8,8 @@ from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser, User
 
 from misa.models import PolarityType
-from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol
-from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, MeasurementProcess
+from misa.models import ExtractionProtocol, SpeProtocol, ChromatographyProtocol, MeasurementProtocol, SampleCollectionProtocol
+from misa.models import ExtractionProcess, SpeProcess, ChromatographyProcess, MeasurementProcess,SampleCollectionProcess
 from misa.models import StudySample, Assay, AssayDetail, AssayRun
 from misa.utils.isa_upload import upload_assay_data_files_zip
 from misa.forms import AssayDetailForm, UploadAssayDataFilesForm
@@ -29,7 +29,11 @@ class AssayDetailFormTestCase(TestCase):
         """
         #Using a model form as a validator that is not a HTTP request (as per page 165 of Two Scoops of Django 1.11
         assay = Assay.objects.filter(description='P_WAX[1]_PHE[0]_LC-MS_LC-MSMS')[0]
-        ss = StudySample.objects.filter(sample_name='BLANK')[0]
+        ss = StudySample.objects.filter(sample_name='B')[0]
+
+        sc = SampleCollectionProcess(
+            samplecollectionprotocol=SampleCollectionProtocol.objects.get(code_field='DIATOM'))
+        sc.save()
 
         ei = ExtractionProcess(extractionprotocol=ExtractionProtocol.objects.filter(code_field='DOM')[0])
         ei.save()
@@ -51,6 +55,7 @@ class AssayDetailFormTestCase(TestCase):
 
         data_in = {'assay': assay.id,
                    'studysample': ss.id,
+                   'samplecollectionprocess': sc.id,
                    'extractionprocess': ei.id,
                    'speprocess': spei.id,
                    'chromatographyprocess': ci.id,
@@ -63,7 +68,7 @@ class AssayDetailFormTestCase(TestCase):
 
         self.assertEqual(ad.chromatographyprocess.chromatographyfrac, 0)
         self.assertEqual(ad.speprocess.spefrac, 2)
-        self.assertEqual(ad.code_field, 'BLANK_DOM_DOM_2_SFRP_0_FT-ICR_POSITIVE')
+        self.assertEqual(ad.code_field, 'B_DIATOM_DOM_DOM_2_SFRP_0_FT-ICR_POSITIVE')
         self.assertIs(len(AssayDetail.objects.all()), 5)
 
 

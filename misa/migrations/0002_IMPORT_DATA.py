@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
 
 from django.db import migrations
 from misa.utils.ontology_utils import check_and_create_ontology
 from misa.utils.sample_batch_create import check_and_create_model
+
 
 def save_model_list_migration(l,db_alias):
     [i.save(using=db_alias) for i in l]
@@ -41,7 +43,7 @@ def forwards_func(apps, schema_editor):
     #######################################################################################################
     # Setup ontologies
     #######################################################################################################
-    print('###ontologies')
+    # print('###ontologies')
     terms = ['NCIT_C49019', 'NCIT_C61575', 'SIO_001046', 'SIO_001047', 'CHEMINF_000070', 'CHMO_0002302',
              'CHMO_0002262', 'CHMO_0002269', 'CO_356:3000142', 'CHMO_0002658', 'CHMO_0002804', 'NCIT_C16631',
              'NCIT_C43366', 'NCIT_C14182', 'NCIT_C62195', 'NCIT_C25360', 'NCIT_C61299', 'NCIT_C25301', 'NCIT_C25207',
@@ -54,7 +56,7 @@ def forwards_func(apps, schema_editor):
     #######################################################################################################
     # Setup ISA backbone
     #######################################################################################################
-    print('###ISA backbone')
+    # print('###ISA backbone')
     investigation = Investigation(name='Example Investigation', description='Example investigation for MOGI tutorial. '
                                                             'Use data derived from the MetaboLights study '
                                                             'MTBLS144. https://www.ebi.ac.uk/metabolights/MTBLS144')
@@ -81,8 +83,6 @@ def forwards_func(apps, schema_editor):
 
     assay_pos = Assay(name='Positive metabolic profiling (FT-ICR)', study=study)
     assay_pos.save(using=db_alias)
-    assay_neg = Assay(name='Negative metabolic profiling (FT-ICR)', study=study)
-    assay_neg.save(using=db_alias)
 
     #######################################################################################################
     # Protocols
@@ -90,7 +90,7 @@ def forwards_func(apps, schema_editor):
     #============================================
     # Sample collection
     #============================================
-    print('###Sample collection protocol')
+    # print('###Sample collection protocol')
     sc_protocol = SampleCollectionProtocol(name="Diatom culturing",
                              description="The diatom Thalassiosira pseudonana (CCMP 1335) was cultured "
                                          "axenically in a modified version of L1 media with Turks Island Salts. "
@@ -102,7 +102,7 @@ def forwards_func(apps, schema_editor):
     #============================================
     # Liquid Phase extraction
     #============================================
-    print('###LPE')
+    # print('###LPE')
     # Liquid Phase Extraction types
     lpe_type1 = ExtractionType(type="Apolar", description="Apolar (non-polar)")
     lpe_type1.save(using=db_alias)
@@ -132,7 +132,7 @@ def forwards_func(apps, schema_editor):
     #============================================
     # Sold phase extraction
     #============================================
-    print('###SPE')
+    # print('###SPE')
     # SPE types
     spe_type1 = SpeType(type="PPL", description="Polymer type sorbents")
     spe_type1.save(using=db_alias)
@@ -147,7 +147,7 @@ def forwards_func(apps, schema_editor):
                                       description="The acidified filtrate was extracted using solid phase extraction with PPL cartridges (Varian Bond Elut PPL cartridges) as previously described [3]. After eluting with methanol, the extracts were dried in a vacufuge, and then re-dissolved in 1 ml 90:10 water:acetonitrile prior to analysis. [1] Dittmar T, Koch B, Hertkorn N, Kattner G. A simple and efficient method for the solid-phase extraction of dissolved organic matter (SPE-DOM) from seawater. Limnology and Oceanography: Methods. June 2008, 6(6), 230–235",
                                       version=1,
                                       code_field="DOM",
-                                      spetype=spe_type2
+                                      spetype=spe_type1
                                       )
     spe_protocol.save(using=db_alias)
 
@@ -155,7 +155,7 @@ def forwards_func(apps, schema_editor):
     #============================================
     # Chromatography
     #============================================
-    print('###Chroma')
+    # print('###Chroma')
     # Chromatography types
     lc_type1 = ChromatographyType(type="Reversed phase chromatography", description="Reversed phase chromatography")
     lc_type1.save(using=db_alias)
@@ -177,7 +177,7 @@ def forwards_func(apps, schema_editor):
     #============================================
     # Measurements
     #============================================
-    print('###Meas')
+    # print('###Meas')
     # Measurement types
     m_type1 = MeasurementTechnique(type="FT-ICR", description="Fourier Tranform Ion Cyclon Resonance Mass Spectrometry")
     m_type1.save()
@@ -194,7 +194,7 @@ def forwards_func(apps, schema_editor):
     #######################################################################################################
     # Organisms
     #######################################################################################################
-    print('###Orgs')
+    # print('###Orgs')
     check_and_create_model('Thalassiosira pseudonana', Organism, db_alias)
     check_and_create_model('Daphnia magna', Organism, db_alias)
     check_and_create_model('Daphnia pulex', Organism, db_alias)
@@ -208,7 +208,7 @@ def forwards_func(apps, schema_editor):
     #######################################################################################################
     # Sample types
     #######################################################################################################
-    print('###Sample Types')
+    # print('###Sample Types')
     st1 = SampleType(type='ANIMAL', ontologyterm=OntologyTerm.objects.filter(name='Animal')[0])
     st2 = SampleType(type='COMPOUND', ontologyterm=OntologyTerm.objects.filter(name='Compound')[0])
     st3 = SampleType(type='BLANK', ontologyterm=OntologyTerm.objects.filter(name='blank value')[0])
@@ -217,6 +217,10 @@ def forwards_func(apps, schema_editor):
     st2.save()
     st3.save()
 
+    #######################################
+    # Add study samples
+    #######################################
+    package_directory = os.path.dirname(os.path.abspath(__file__))
 
 def reverse_func(apps, schema_editor):
     ##########################

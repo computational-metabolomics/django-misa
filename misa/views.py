@@ -733,13 +733,13 @@ class InvestigationListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 ############################################################################################
 class StudyCreateView(LoginRequiredMixin, CreateView):
     model = Study
-    success_url = '/misa/success'
+    success_url = reverse_lazy('ilist')
     form_class = StudyForm
 
 
 class StudyUpdateView(LoginRequiredMixin, UpdateView):
     model = Study
-    success_url = '/misa/success'
+    success_url = reverse_lazy('ilist')
     form_class = StudyForm
 
 
@@ -763,13 +763,13 @@ class StudyAutocomplete(OntologyTermAutocomplete):
 ############################################################################################
 class AssayCreateView(LoginRequiredMixin, CreateView):
     model = Assay
-    success_url = '/misa/success'
+    success_url = reverse_lazy('ilist')
     fields = '__all__'
 
 
 class AssayUpdateView(LoginRequiredMixin, UpdateView):
     model = Assay
-    success_url = '/misa/success'
+    success_url = reverse_lazy('ilist')
     fields = '__all__'
 
 class AssayListView(LoginRequiredMixin, ListView):
@@ -779,8 +779,6 @@ class AssayListView(LoginRequiredMixin, ListView):
 
 class UploadAssayDataFilesView(LoginRequiredMixin, View):
 
-    success_msg = ""
-    success_url = '/dma/success'
     # initial = {'key': 'value'}
     template_name = 'misa/upload_assay_data_files.html'
 
@@ -801,8 +799,8 @@ class UploadAssayDataFilesView(LoginRequiredMixin, View):
 
 
             if data_zipfile:
-                upload_assay_data_files_zip(assayid, data_zipfile, data_mappingfile, request.user, create_assay_details)
-                return render(request, 'dma/success.html')
+                upload_assay_data_files_zip(assayid, data_zipfile,  form.mapping_l, request.user, create_assay_details)
+                return render(request, 'misa/investigation_list.html')
             else:
                 save_as_link = form.cleaned_data['save_as_link']
                 # recursive = form.cleaned_data['recursive']

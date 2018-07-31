@@ -29,32 +29,48 @@ from gfiles.models import GenericFile
 from django_tables2.utils import A
 
 class AssayFileTable(ColumnShiftTable):
+    study = tables.Column(accessor='run.assayrun.assaydetail.assay.study.name',
+                                  verbose_name='Study')
+
+    assay = tables.Column(accessor='run.assayrun.assaydetail.assay.name',
+                          verbose_name='Assay')
+
     sample_name = tables.Column(accessor='run.assayrun.assaydetail.studysample.sample_name',
                                 verbose_name='Sample name')
 
     technical_replicate = tables.Column(accessor='run.assayrun.technical_replicate',
-                        verbose_name='tech replicate')
+                                        verbose_name='tech replicate')
 
-    spetype = tables.Column(accessor='run.assayrun.assaydetail.speprocess.speprotocol.spetype.type',
-                             verbose_name='SPE type')
+    samplecollection = tables.LinkColumn(accessor='run.assayrun.assaydetail.samplecollectionprocess.samplecollectionprotocol.code_field',
+                                verbose_name='Sample collection', viewname='scp_list')
+
+    lpe = tables.Column(accessor='run.assayrun.assaydetail.extractionprocess.extractionprotocol.code_field',
+                                verbose_name='Liquid Phase Extraction (LPE)')
+
+
+    spetype = tables.Column(accessor='run.assayrun.assaydetail.speprocess.speprotocol.code_field',
+                            verbose_name='Solid Phase Extraction (SPE)')
 
     spefrac = tables.Column(accessor='run.assayrun.assaydetail.speprocess.spefrac',
-                        verbose_name='SPE frac')
+                            verbose_name='SPE frac')
 
-    chromatography = tables.Column(accessor='run.assayrun.assaydetail.chromatographyprocess.chromatographyprotocol.chromatographytype.type',
-                             verbose_name='Chromatography')
+    chromatography = tables.Column(
+        accessor='run.assayrun.assaydetail.chromatographyprocess.chromatographyprotocol.code_field',
+        verbose_name='Chromatography')
 
     chromatographyfrac = tables.Column(accessor='run.assayrun.assaydetail.chromatographyprocess.chromatographyfrac',
-                                   verbose_name='Chromatography frac')
+                                       verbose_name='Chromatography frac')
 
-    measurement = tables.Column(accessor='run.assayrun.assaydetail.measurementprocess.measurementprotocol.measurementtechnique.type',
-                                        verbose_name='Measurement')
+    measurement = tables.Column(
+        accessor='run.assayrun.assaydetail.measurementprocess.measurementprotocol.code_field',
+        verbose_name='Measurement')
 
     polarity = tables.Column(accessor='run.assayrun.assaydetail.measurementprocess.polaritytype.type',
-                                verbose_name='Polarity')
+                             verbose_name='Polarity')
 
     code_field = tables.Column(accessor='run.assayrun.assaydetail.code_field',
-                               verbose_name='Code field')
+                             verbose_name='Code field')
+
 
     class Meta:
         model = MFile
@@ -65,29 +81,47 @@ class AssayFileTable(ColumnShiftTable):
 
 class AssayDetailTable(ColumnShiftTable):
 
+
+    study = tables.Column(accessor='assay.study.name',
+                                  verbose_name='Study')
+
+    assay = tables.Column(accessor='assay.name',
+                          verbose_name='Assay')
+
     sample_name = tables.Column(accessor='studysample.sample_name',
                                 verbose_name='Sample name')
 
-    spetype = tables.Column(accessor='speprocess.speprotocol.spetype.type',
-                             verbose_name='SPE type')
+
+    samplecollection = tables.Column(accessor='samplecollectionprocess.samplecollectionprotocol.code_field',
+                                verbose_name='Sample collection')
+
+    lpe = tables.Column(accessor='extractionprocess.extractionprotocol.code_field',
+                                verbose_name='Liquid Phase Extraction (LPE)')
+
+
+    spetype = tables.Column(accessor='speprocess.speprotocol.code_field',
+                            verbose_name='Solid Phase Extraction (SPE)')
 
     spefrac = tables.Column(accessor='speprocess.spefrac',
-                        verbose_name='SPE frac')
+                            verbose_name='SPE frac')
 
-    chromatography = tables.Column(accessor='chromatographyprocess.chromatographyprotocol.chromatographytype.type',
-                             verbose_name='Chromatography')
+    chromatography = tables.Column(
+        accessor='chromatographyprocess.chromatographyprotocol.code_field',
+        verbose_name='Chromatography')
 
     chromatographyfrac = tables.Column(accessor='chromatographyprocess.chromatographyfrac',
-                                   verbose_name='Chromatography frac')
+                                       verbose_name='Chromatography frac')
 
-    measurement = tables.Column(accessor='measurementprocess.measurementprotocol.measurementtechnique.type',
-                                        verbose_name='Measurement')
+    measurement = tables.Column(
+        accessor='measurementprocess.measurementprotocol.code_field',
+        verbose_name='Measurement')
 
     polarity = tables.Column(accessor='measurementprocess.polaritytype.type',
-                                verbose_name='Polarity')
+                             verbose_name='Polarity')
 
     code_field = tables.Column(accessor='code_field',
-                               verbose_name='Code field')
+                             verbose_name='Code field')
+
 
     class Meta:
         model = AssayDetail
@@ -127,25 +161,31 @@ class ISAFileSelectTable(ColumnShiftTable):
     sample_name = tables.Column(accessor='mfile.run.assayrun.assaydetail.studysample.sample_name',
                                 verbose_name='Sample name')
 
-
     technical_replicate = tables.Column(accessor='mfile.run.assayrun.technical_replicate',
                                         verbose_name='tech replicate')
 
-    spetype = tables.Column(accessor='mfile.run.assayrun.assaydetail.speprocess.speprotocol.spetype.type',
-                            verbose_name='SPE type')
+    samplecollection = tables.LinkColumn(accessor='mfile.run.assayrun.assaydetail.samplecollectionprocess.samplecollectionprotocol.code_field',
+                                verbose_name='Sample collection', viewname='scp_list')
+
+    lpe = tables.Column(accessor='mfile.run.assayrun.assaydetail.extractionprocess.extractionprotocol.code_field',
+                                verbose_name='Liquid Phase Extraction (LPE)')
+
+
+    spetype = tables.Column(accessor='mfile.run.assayrun.assaydetail.speprocess.speprotocol.code_field',
+                            verbose_name='Solid Phase Extraction (SPE)')
 
     spefrac = tables.Column(accessor='mfile.run.assayrun.assaydetail.speprocess.spefrac',
                             verbose_name='SPE frac')
 
     chromatography = tables.Column(
-        accessor='mfile.run.assayrun.assaydetail.chromatographyprocess.chromatographyprotocol.chromatographytype.type',
+        accessor='mfile.run.assayrun.assaydetail.chromatographyprocess.chromatographyprotocol.code_field',
         verbose_name='Chromatography')
 
     chromatographyfrac = tables.Column(accessor='mfile.run.assayrun.assaydetail.chromatographyprocess.chromatographyfrac',
                                        verbose_name='Chromatography frac')
 
     measurement = tables.Column(
-        accessor='mfile.run.assayrun.assaydetail.measurementprocess.measurementprotocol.measurementtechnique.type',
+        accessor='mfile.run.assayrun.assaydetail.measurementprocess.measurementprotocol.code_field',
         verbose_name='Measurement')
 
     polarity = tables.Column(accessor='mfile.run.assayrun.assaydetail.measurementprocess.polaritytype.type',
