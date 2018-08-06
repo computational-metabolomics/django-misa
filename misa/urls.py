@@ -132,7 +132,7 @@ urlpatterns = [
     url(r'^ssam_create/$', views.StudySampleCreateView.as_view(), name='ssam_create'),
     url(r'^ssam_update/(?P<pk>\d+)/$', views.StudySampleUpdateView.as_view(), name='ssam_update'),
     url(r'^ssam_list/$', views.StudySampleListView.as_view(), name='ssam_list'),
-    url(r'^ssam_delete/(?P<pk>[\w]+)/$', views.StudySampleListView.as_view(), name='ssam_delete'),
+    url(r'^ssam_delete/(?P<pk>[\w]+)/$', views.StudySampleDeleteView.as_view(), name='ssam_delete'),
     url(r'^ssam_batch_create/$', views.StudySampleBatchCreate.as_view(), name='ssam_batch_create'),
     url(r'^sampletype-autocomplete/$', views.SampleTypeAutocomplete.as_view(), name='sampletype-autocomplete'),
 

@@ -1,7 +1,11 @@
 {% extends 'gfiles/simple_form.html' %}
 {% load static %}
 {% block sb_admin_title %}
-    Add an Organism
+    {% if form.instance.pk %}
+        Update an Organism
+    {% else %}
+        Add an Organism
+    {% endif %}
 {% endblock sb_admin_title %}
 {% block sb_admin_subheading %} <small></small> {% endblock sb_admin_subheading %}
 
@@ -11,7 +15,11 @@
 {% endblock sb_admin_breadcrumb %}
 
 {% block sb_admin_breadcrumb_active %}
-    Add an Organism
+    {% if form.instance.pk %}
+        / Update an Organism
+    {% else %}
+        / Add an Organism
+    {% endif %}
 {% endblock sb_admin_breadcrumb_active %}
 {% block panel_title %}{% endblock panel_title %}
 
