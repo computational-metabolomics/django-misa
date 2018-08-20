@@ -47,7 +47,8 @@ def forwards_func(apps, schema_editor):
     terms = ['NCIT_C49019', 'NCIT_C61575', 'SIO_001046', 'SIO_001047', 'CHEMINF_000070', 'CHMO_0002302',
              'CHMO_0002262', 'CHMO_0002269', 'CO_356:3000142', 'CHMO_0002658', 'CHMO_0002804', 'NCIT_C16631',
              'NCIT_C43366', 'NCIT_C14182', 'NCIT_C62195', 'NCIT_C25360', 'NCIT_C61299', 'NCIT_C25301', 'NCIT_C25207',
-             'NCBITaxon_35128',  'NCIT_C13413', 'NCBITaxon_35525', 'NCBITaxon_6669', 'SIO_001047' 'OMIT_0025161']
+             'NCBITaxon_35128',  'NCIT_C13413', 'NCBITaxon_35525', 'NCBITaxon_6669', 'SIO_001047' 'OMIT_0025161',
+             'CHMO_0000524', 'CHMO_0000701','OMIT_0025161', 'CHMO_0000575']
 
 
     [check_and_create_ontology(term, db_alias, False) for term in terms]
@@ -134,23 +135,29 @@ def forwards_func(apps, schema_editor):
     #============================================
     # print('###SPE')
     # SPE types
-    spe_type1 = SpeType(type="PPL", description="Polymer type sorbents")
+    spe_type1 = SpeType(type="Ion exchange SPE", description="Electrostatic interactions between the analyte of interest "
+                                                         "can be anion or cation")
     spe_type1.save(using=db_alias)
-    # spe_type1.ontologyterm.add(OntologyTerm.objects.filter(short_form='OMIT_0025161')[0])
 
-    spe_type2 = SpeType(type="Weak anion-exchange", description="Weak anion-exchange solid phase extraction")
+    spe_type2 = SpeType(type="Normal-phase SPE", description="Polar stationary phase")
     spe_type2.save(using=db_alias)
-    # spe_type2.ontologyterm.add(OntologyTerm.objects.filter(short_form='OMIT_0025161')[0])
-    spe_type2.ontologyterm.add(OntologyTerm.objects.filter(name='weak anion-exchange column')[0])
+
+    spe_type3 = SpeType(type="Reverse-phase SPE", description="Apolar stationary phase")
+    spe_type3.save(using=db_alias)
+
+    spe_type4 = SpeType(type="Mixed mode SPE", description="Combination of retention mechanisms on a "
+                                                           "single cartridge")
+    spe_type4.save(using=db_alias)
+
+
 
     spe_protocol = SpeProtocol(name="SPE-DOM (PPL)",
                                       description="The acidified filtrate was extracted using solid phase extraction with PPL cartridges (Varian Bond Elut PPL cartridges) as previously described [3]. After eluting with methanol, the extracts were dried in a vacufuge, and then re-dissolved in 1 ml 90:10 water:acetonitrile prior to analysis. [1] Dittmar T, Koch B, Hertkorn N, Kattner G. A simple and efficient method for the solid-phase extraction of dissolved organic matter (SPE-DOM) from seawater. Limnology and Oceanography: Methods. June 2008, 6(6), 230–235",
                                       version=1,
                                       code_field="DOM",
-                                      spetype=spe_type1
+                                      spetype=spe_type4
                                       )
     spe_protocol.save(using=db_alias)
-
 
     #============================================
     # Chromatography
@@ -179,17 +186,31 @@ def forwards_func(apps, schema_editor):
     #============================================
     # print('###Meas')
     # Measurement types
-    m_type1 = MeasurementTechnique(type="FT-ICR", description="Fourier Tranform Ion Cyclon Resonance Mass Spectrometry")
-    m_type1.save()
-    m_type1.ontologyterm.add(OntologyTerm.objects.filter(name='linear quadrupole ion trap Fourier transform ion cyclotron resonance mass spectrometer')[0])
+    m_type1 = MeasurementTechnique(type="LC-MS", description="Liquid Chromatography mass spectrometry")
+    m_type1.save(using=db_alias)
+    m_type1.ontologyterm.add(OntologyTerm.objects.filter(short_form='CHMO_0000524')[0])
+
+    m_type2 = MeasurementTechnique(type="LC-MSMS", description="Liquid Chromatography tandem mass spectrometry")
+    m_type2.save(using=db_alias)
+    m_type2.ontologyterm.add(OntologyTerm.objects.filter(short_form='CHMO_0000701')[0])
+
+    m_type3 = MeasurementTechnique(type="DI-MS", description="Direct infusion mass spectrometry")
+    m_type3.save(using=db_alias)
+
+    m_type4 = MeasurementTechnique(type="DI-MSn", description="Direct infusion mass spectrometry with fragmentation")
+    m_type4.save(using=db_alias)
+
 
     m_protocol = MeasurementProtocol(name="FT-ICR",
                                      description="All metabolomics analyses were conducted using liquid chromatography (LC) coupled by electrospray ionization to a hybrid linear ion trap - Fourier-transform ion cyclotron resonance (FT-ICR) mass spectrometer (7T LTQ FT Ultra, Thermo Scientific) Both full MS and MS/MS data were collected. The MS scan was performed in the FT-ICR cell from m/z 100-1000 at 100,000 resolving power (defined at 400 m/z). In parallel to the FT acquisition, MS/MS scans were collected at nominal mass resolution in the ion trap from the two features with the highest peak intensities in each scan. Separate autosampler injections were made for analysis in positive and negative ion modes.",
                                      version=1,
                                      code_field="FT-ICR",
-                                     measurementtechnique=m_type1
+                                     measurementtechnique=m_type2
                                      )
     m_protocol.save(using=db_alias)
+    m_protocol.ontologyterm.add(OntologyTerm.objects.filter(
+        name='linear quadrupole ion trap Fourier transform ion cyclotron resonance mass spectrometer')[0])
+    m_protocol.ontologyterm.add(OntologyTerm.objects.filter(short_form='CHMO_0000575')[0])
 
     #######################################################################################################
     # Organisms

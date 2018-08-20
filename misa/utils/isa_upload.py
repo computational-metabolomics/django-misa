@@ -77,6 +77,8 @@ def get_mapping_d(mapping_l, assayid, create_assay_details=False):
         if not fn:
             continue
 
+        print(row)
+
         ad = search_assay_detail(row, qs)
 
         if create_assay_details and not ad:
@@ -89,7 +91,7 @@ def get_mapping_d(mapping_l, assayid, create_assay_details=False):
 
 def search_assay_detail(row, qs):
     code_field = row_2_codefield(row)
-
+    print(code_field)
     match = qs.filter(code_field=code_field)
     if match:
         return match[0]
@@ -154,7 +156,7 @@ def frac2numbers(row):
 def row_2_codefield(row):
     cfrac, spefrac = frac2numbers(row)
 
-    return '{}_{}_{}_{}_{}_{}_{}_{}'.format(      row['sample'],
+    return '{}_{}_{}_{}_{}_{}_{}_{}_{}'.format(      row['sample'],
                                                   row['sample_collection'],
                                                   row['extraction'],
                                                   row['spe'],

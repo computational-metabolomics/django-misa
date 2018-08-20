@@ -112,7 +112,7 @@ class Study(models.Model):
     submission_date = models.DateTimeField(blank=True, null=True)
     public_release_date = models.DateTimeField(blank=True, null=True)
 
-    study_design_descriptors = models.ManyToManyField(OntologyTerm,
+    study_design_descriptors = models.ManyToManyField(OntologyTerm, blank=True,
                                                       help_text=mark_safe("Any ontological terms that can describe or 'tag' the study"
                                                                " <a target='_blank' href='/misa/search_ontologyterm/'>add</a>."))
 
@@ -235,7 +235,7 @@ class AssayRun(models.Model):
 class PType(models.Model):
     type = models.CharField(max_length=100, blank=True, null=True, unique=True)
     description = models.CharField(max_length=200, blank=True, null=True)
-    ontologyterm = models.ManyToManyField(OntologyTerm, help_text=ONTOLOGY_ADD_HELP)
+    ontologyterm = models.ManyToManyField(OntologyTerm, help_text=ONTOLOGY_ADD_HELP, blank=True)
 
     class Meta:
         abstract = True
@@ -293,12 +293,18 @@ class Protocol(models.Model):
     uri = models.CharField(max_length=200, null=True, blank=True)
     version = models.CharField(max_length=30, null=True, blank=True)
     code_field = models.CharField(max_length=20, null=False, unique=True)
+    ontologyterm = models.ManyToManyField(OntologyTerm, help_text=ONTOLOGY_ADD_HELP, blank=True)
 
     class Meta:
         abstract = True
 
     def __str__(self):              # __unicode__ on Python 2
         return self.code_field
+
+    @property
+    def all_ontologyterms(self):
+        return ' | '.join(['{}, {}'.format(x.name, x.short_form) for x in self.ontologyterm.all()])
+
 
 
 class SampleCollectionProtocol(Protocol):

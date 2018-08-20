@@ -280,6 +280,7 @@ class OntologyTermTableLocal(ColumnShiftTable):
 
 
 class ExtractionProtocolTable(tables.Table):
+    ontology_terms = tables.Column(accessor='all_ontologyterms', verbose_name='Ontology terms')
     extractiontype = tables.LinkColumn('et_list', verbose_name='Type')
     update = tables.LinkColumn('ep_update', text='update', verbose_name='Update', args=[A('id')])
     delete = tables.LinkColumn('ep_delete', text='delete', verbose_name='Delete', args=[A('id')])
@@ -301,6 +302,7 @@ class ExtractionTypeTable(tables.Table):
 
 
 class SpeProtocolTable(tables.Table):
+    ontology_terms = tables.Column(accessor='all_ontologyterms', verbose_name='Ontology terms')
     spetype = tables.LinkColumn('spet_list', verbose_name='Type')
     update = tables.LinkColumn('spep_update', text='update', verbose_name='Update', args=[A('id')])
     delete = tables.LinkColumn('spep_delete', text='delete', verbose_name='Delete', args=[A('id')])
@@ -322,6 +324,7 @@ class SpeTypeTable(tables.Table):
 
 
 class ChromatographyProtocolTable(tables.Table):
+    ontology_terms = tables.Column(accessor='all_ontologyterms', verbose_name='Ontology terms')
     chromatographytype = tables.LinkColumn('ct_list', verbose_name='Type')
     update = tables.LinkColumn('cp_update', text='update', verbose_name='Update', args=[A('id')])
     delete = tables.LinkColumn('cp_delete', text='delete', verbose_name='Delete', args=[A('id')])
@@ -343,6 +346,7 @@ class ChromatographyTypeTable(tables.Table):
 
 
 class MeasurementProtocolTable(tables.Table):
+    ontology_terms = tables.Column(accessor='all_ontologyterms', verbose_name='Ontology terms')
     measurementtechnique = tables.LinkColumn('mt_list', verbose_name='Technique')
     update = tables.LinkColumn('mp_update', text='update', verbose_name='Update', args=[A('id')])
     delete = tables.LinkColumn('mp_delete', text='delete', verbose_name='Delete', args=[A('id')])
@@ -350,6 +354,7 @@ class MeasurementProtocolTable(tables.Table):
         model = MeasurementProtocol
         attrs = {'class': 'paleblue'}
         template = 'django_tables2/bootstrap.html'
+
 
 
 class MeasurementTechniqueTable(tables.Table):

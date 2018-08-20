@@ -127,6 +127,7 @@ urlpatterns = [
     url(r'^acreate/$', views.AssayCreateView.as_view(), name='acreate'),
     url(r'^aupdate/(?P<pk>\d+)/$', views.AssayUpdateView.as_view(), name='aupdate'),
     url(r'^alist/$', views.AssayListView.as_view(), name='alist'),
+    url(r'^assay-autocomplete/$', views.AssayAutocomplete.as_view(), name='assay-autocomplete'),
 
     # Study Sample
     url(r'^ssam_create/$', views.StudySampleCreateView.as_view(), name='ssam_create'),

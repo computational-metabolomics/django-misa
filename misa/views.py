@@ -45,14 +45,11 @@ from misa.models import (
     SpeType,
     SampleCollectionProtocol,
     DataTransformationProtocol,
-
-
 )
 
 from misa.forms import (
     UploadAssayDataFilesForm,
     SearchOntologyTermForm,
-
     StudyFactorForm,
     StudyForm,
     OrganismPartForm,
@@ -97,9 +94,8 @@ from misa.tables import (
     StudyFactorTable,
     OrganismTable,
     OrganismPartTable,
-
-
 )
+
 from misa.filter import (
     ISAFileFilter,
     InvestigationFilter,
@@ -772,9 +768,14 @@ class AssayUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('ilist')
     fields = '__all__'
 
+
 class AssayListView(LoginRequiredMixin, ListView):
     model = Assay
     fields = '__all__'
+
+
+class AssayAutocomplete(OntologyTermAutocomplete):
+    model_class = Assay
 
 
 class UploadAssayDataFilesView(LoginRequiredMixin, View):

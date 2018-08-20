@@ -118,6 +118,44 @@ class UploadAssayDataFilesForm(UploadMFilesBatchForm):
             msg = 'The mapping file is missing the following files: {}'.format(missing_files_str)
             raise forms.ValidationError(msg)
 
+        ###################################################
+        # Check columns are present
+        ###################################################
+        expected_cols = ['filename', 'sample', 'sample_collection', 'extraction', 'spe', 'spe_frac', 'chromatography',
+                         'chromatography_frac', 'measurement', 'polarity', 'fileformat']
+        missing_cols = set(expected_cols).difference(list(mapping_l[0].keys()))
+
+        if missing_cols:
+            msg = 'The mapping file is missing the following columns: {}'.format(', '.join(missing_cols))
+            raise forms.ValidationError(msg)
+
+
+        ###################################################
+        # Check protocols and samples are available
+        ###################################################
+        missing_protocols = []
+        for row in mapping_l:
+            if not row['filename']:
+                continue
+            if not SampleCollectionProtocol.objects.filter(code_field=row['sample_collection']):
+                missing_protocols.append('sample collection: {}'.format(row['sample_collection']))
+
+            if not ExtractionProtocol.objects.filter(code_field=row['extraction']):
+                missing_protocols.append('(liquid phase) extraction: {}'.format(row['extraction']))
+
+            if not SpeProtocol.objects.filter(code_field=row['spe']):
+                missing_protocols.append('solid phase extraction: {}'.format(row['spe']))
+
+            if not MeasurementProtocol.objects.filter(code_field=row['measurement']):
+                missing_protocols.append('Measurement: {}'.format(row['measurement']))
+
+            if not StudySample.objects.filter(sample_name=row['sample'],
+                                              study=Study.objects.get(assay__id=self.assayid)):
+                missing_protocols.append('sample: {}'.format(row['sample']))
+
+        if missing_protocols:
+            msg = 'Protocols have not been created for: {}'.format(', '.join(missing_protocols))
+            raise forms.ValidationError(msg)
 
         #######################################################
         # Check assay details are present
@@ -220,6 +258,7 @@ class ChromatographyProtocolForm(forms.ModelForm):
         fields = ('__all__')
         widgets = {
             'chromatographytype': autocomplete.ModelSelect2(url='chromatographytype-autocomplete'),
+            'ontologyterm': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete')
             # 'instrument_name': autocomplete.ModelSelect2(url='ontologyterm-autocomplete')
         }
 
@@ -246,7 +285,8 @@ class MeasurementProtocolForm(forms.ModelForm):
         model = MeasurementProtocol
         fields = ('__all__')
         widgets = {
-            'measurementtechnique': autocomplete.ModelSelect2(url='measurementtechnique-autocomplete')
+            'measurementtechnique': autocomplete.ModelSelect2(url='measurementtechnique-autocomplete'),
+            'ontologyterm': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete')
         }
 
 
@@ -255,7 +295,8 @@ class ExtractionProtocolForm(forms.ModelForm):
         model = ExtractionProtocol
         fields = ('__all__')
         widgets = {
-            'extractiontype': autocomplete.ModelSelect2(url='extractiontype-autocomplete')
+            'extractiontype': autocomplete.ModelSelect2(url='extractiontype-autocomplete'),
+            'ontologyterm': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete')
         }
 
 
@@ -264,7 +305,8 @@ class ExtractionTypeForm(forms.ModelForm):
         model = ExtractionType
         fields = ('__all__')
         widgets = {
-            'ontologyterm': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete')
+            'ontologyterm': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete'),
+
         }
 
 
@@ -273,7 +315,8 @@ class SpeProtocolForm(forms.ModelForm):
         model = SpeProtocol
         fields = ('__all__')
         widgets = {
-            'spetype': autocomplete.ModelSelect2(url='spetype-autocomplete')
+            'spetype': autocomplete.ModelSelect2(url='spetype-autocomplete'),
+            'ontologyterm': autocomplete.ModelSelect2Multiple(url='ontologyterm-autocomplete')
         }
 
 
