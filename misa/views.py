@@ -14,6 +14,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, DetailView, DeleteView, UpdateView, ListView, View
 from django_tables2 import RequestConfig
 from django.urls import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
+from django.utils.safestring import mark_safe
 
 from misa.utils.sample_batch_create import sample_batch_create
 
@@ -146,15 +148,17 @@ class ISAJsonExport(LoginRequiredMixin, View):
 ############################################################################################
 # Adding ontology terms
 ############################################################################################
-class OntologyTermCreateView(LoginRequiredMixin, CreateView):
+class OntologyTermCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = OntologyTerm
     success_url = reverse_lazy('list_ontologyterm')
     fields = '__all__'
+    success_message = 'Ontology term created'
 
-class OntologyTermUpdateView(LoginRequiredMixin, UpdateView):
+class OntologyTermUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = OntologyTerm
     success_url = reverse_lazy('list_ontologyterm')
     fields = '__all__'
+    success_message = 'Ontology term updated'
 
 class OntologyTermDeleteView(DeleteView):
     model = OntologyTerm
@@ -206,10 +210,11 @@ class OntologyTermSearchResultView(LoginRequiredMixin, View):
 
 
 
-class AddOntologyTermView(LoginRequiredMixin, CreateView):
+class AddOntologyTermView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = OntologyTerm
     success_url = reverse_lazy('list_ontologyterm')
     fields = '__all__'
+    success_message = 'Ontology term created'
 
     def get_initial(self):
         res = self.request.session.get('res')
@@ -243,16 +248,18 @@ class OntologyTermAutocomplete(autocomplete.Select2QuerySetView):
 ############################################################################################
 # Organism Views
 ############################################################################################
-class OrganismCreateView(LoginRequiredMixin, CreateView):
+class OrganismCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = Organism
     success_url = reverse_lazy('org_list')
     form_class = OrganismForm
+    success_message = 'Organism created'
 
 
-class OrganismUpdateView(LoginRequiredMixin, UpdateView):
+class OrganismUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = Organism
     form_class = OrganismForm
     success_url = reverse_lazy('org_list')
+    success_message = 'Organism updated'
 
 
 class OrganismDeleteView(DeleteView):
@@ -271,16 +278,18 @@ class OrganismListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 ############################################################################################
 # Organism Part Views
 ############################################################################################
-class OrganismPartCreateView(LoginRequiredMixin, CreateView):
+class OrganismPartCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     form_class = OrganismPartForm
     model = OrganismPart
     success_url = reverse_lazy('orgpart_list')
+    success_message = 'Organism part created'
 
 
-class OrganismPartUpdateView(LoginRequiredMixin, UpdateView):
+class OrganismPartUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = OrganismPart
     form_class = OrganismPartForm
     success_url = reverse_lazy('orgpart_list')
+    success_message = 'Organism part updated'
 
 
 class OrganismPartDeleteView(DeleteView):
@@ -309,16 +318,18 @@ class OrganismPartAutocomplete(OntologyTermAutocomplete):
 #=======================================
 # Sample Collection Protocol
 #=======================================
-class SampleCollectionProtocolCreateView(LoginRequiredMixin, CreateView):
+class SampleCollectionProtocolCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = SampleCollectionProtocol
     form_class = SampleCollectionProtocolForm
     success_url = reverse_lazy('scp_list')
+    success_message = 'Sample collection protocol created'
 
 
-class SampleCollectionProtocolUpdateView(LoginRequiredMixin, UpdateView):
+class SampleCollectionProtocolUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = SampleCollectionProtocol
     form_class = SampleCollectionProtocolForm
     success_url = reverse_lazy('scp_list')
+    success_message = 'Sample collection protocol updated'
 
 
 class SampleCollectionProtocolDeleteView(DeleteView):
@@ -338,16 +349,18 @@ class SampleCollectionProtocolListView(LoginRequiredMixin, SingleTableMixin, Fil
 #=======================================
 # Sample Collection Protocol
 #=======================================
-class DataTransformationProtocolCreateView(LoginRequiredMixin, CreateView):
+class DataTransformationProtocolCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = DataTransformationProtocol
     form_class = DataTransformationProtocolForm
     success_url = reverse_lazy('dp_list')
+    success_message = 'Data transformation protocol created'
 
 
-class DataTransformationProtocolUpdateView(LoginRequiredMixin, UpdateView):
+class DataTransformationProtocolUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = DataTransformationProtocol
     form_class = DataTransformationProtocolForm
     success_url = reverse_lazy('dp_list')
+    success_message = 'Data transformation protocol updated'
 
 
 class DataTransformationProtocolDeleteView(DeleteView):
@@ -365,13 +378,22 @@ class DataTransformationProtocolListView(LoginRequiredMixin, SingleTableMixin, F
 
 
 
+
 #=======================================
 # Extraction Protocol
 #=======================================
-class ExtractionProtocolCreateView(LoginRequiredMixin, CreateView):
+class ExtractionProtocolCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = ExtractionProtocol
     form_class = ExtractionProtocolForm
     success_url = reverse_lazy('ep_list')
+    success_message = '(liquid-phase) Extraction protocol created'
+
+
+class ExtractionProtocolUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+    model = ExtractionProtocol
+    form_class = ExtractionProtocolForm
+    success_url = reverse_lazy('ep_list')
+    success_message = '(liquid-phase) Extraction protocol updated'
 
 
 class ExtractionProtocolListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
@@ -379,12 +401,6 @@ class ExtractionProtocolListView(LoginRequiredMixin,  SingleTableMixin,  FilterV
     model = ExtractionProtocol
     filterset_class = ExtractionProtocolFilter
     template_name = 'misa/extraction_protocol_list.html'
-
-
-class ExtractionProtocolUpdateView(LoginRequiredMixin, UpdateView):
-    model = ExtractionProtocol
-    form_class = ExtractionProtocolForm
-    success_url = reverse_lazy('ep_list')
 
 
 class ExtractionProtocolDeleteView(DeleteView):
@@ -396,16 +412,18 @@ class ExtractionProtocolDeleteView(DeleteView):
 #=======================================
 # Extraction Type
 #=======================================
-class ExtractionTypeCreateView(LoginRequiredMixin, CreateView):
+class ExtractionTypeCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = ExtractionType
     form_class = ExtractionTypeForm
     success_url = reverse_lazy('et_list')
+    success_message = 'Extraction type created'
 
 
-class ExtractionTypeUpdateView(LoginRequiredMixin, UpdateView):
+class ExtractionTypeUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = ExtractionType
     form_class = ExtractionTypeForm
     success_url = reverse_lazy('et_list')
+    success_message = 'Extraction type updated'
 
 class ExtractionTypeDeleteView(DeleteView):
     model = ExtractionType
@@ -426,15 +444,17 @@ class ExtractionTypeAutocomplete(OntologyTermAutocomplete):
 #=======================================
 # Chromatography protocol
 #=======================================
-class ChromatographyProtocolCreateView(LoginRequiredMixin, CreateView):
+class ChromatographyProtocolCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = ChromatographyProtocol
     form_class = ChromatographyProtocolForm
     success_url = reverse_lazy('cp_list')
+    success_message = 'Chromatography protocol created'
 
-class ChromatographyProtocolUpdateView(LoginRequiredMixin, UpdateView):
+class ChromatographyProtocolUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = ChromatographyProtocol
     form_class = ChromatographyProtocolForm
     success_url = reverse_lazy('cp_list')
+    success_message = 'Chromatography protocol updated'
 
 class ChromatographyProtocolDeleteView(DeleteView):
     model = ChromatographyProtocol
@@ -451,15 +471,17 @@ class ChromatographyProtocolListView(LoginRequiredMixin,  SingleTableMixin,  Fil
 #=======================================
 # Chromatography type
 #=======================================
-class ChromatographyTypeCreateView(LoginRequiredMixin, CreateView):
+class ChromatographyTypeCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = ChromatographyType
     form_class = ChromatographyTypeForm
     success_url = reverse_lazy('ct_list')
+    success_message = 'Chromatography type created'
 
-class ChromatographyTypeUpdateView(LoginRequiredMixin, UpdateView):
+class ChromatographyTypeUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = ChromatographyType
     form_class = ChromatographyTypeForm
     success_url = reverse_lazy('ct_list')
+    success_message = 'Chromatography type updated'
 
 class ChromatographyTypeDeleteView(DeleteView):
     model = ChromatographyType
@@ -473,6 +495,7 @@ class ChromatographyTypeListView(LoginRequiredMixin,  SingleTableMixin,  FilterV
     template_name = 'misa/chromatography_type_list.html'
 
 
+
 class ChromatographyTypeAutocomplete(OntologyTermAutocomplete):
     model_class = ChromatographyType
 
@@ -480,16 +503,18 @@ class ChromatographyTypeAutocomplete(OntologyTermAutocomplete):
 #=======================================
 # SPE protocol
 #=======================================
-class SpeProtocolCreateView(LoginRequiredMixin, CreateView):
+class SpeProtocolCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = SpeProtocol
     form_class = SpeProtocolForm
     success_url = reverse_lazy('spep_list')
+    success_message = 'Solid phase extraction protocol created'
 
 
-class SpeProtocolUpdateView(LoginRequiredMixin, UpdateView):
+class SpeProtocolUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = SpeProtocol
     form_class = SpeProtocolForm
     success_url = reverse_lazy('spep_list')
+    success_message = 'Solid phase extraction protocol updated'
 
 
 class SpeProtocolDeleteView(DeleteView):
@@ -508,16 +533,18 @@ class SpeProtocolListView(LoginRequiredMixin,  SingleTableMixin,  FilterView):
 #=======================================
 # SPE type
 #=======================================
-class SpeTypeCreateView(LoginRequiredMixin, CreateView):
+class SpeTypeCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = SpeType
     form_class = SpeTypeForm
     success_url = reverse_lazy('spet_list')
+    success_message = 'Solid phase extraction type created'
 
 
-class SpeTypeUpdateView(LoginRequiredMixin, UpdateView):
+class SpeTypeUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = SpeType
     form_class = SpeTypeForm
     success_url = reverse_lazy('spet_list')
+    success_message = 'Solid phase extraction type updated'
 
 
 class SpeTypeDeleteView(DeleteView):
@@ -541,16 +568,18 @@ class SpeTypeAutocomplete(OntologyTermAutocomplete):
 #=======================================
 # Measurement protocol
 #=======================================
-class MeasurementProtocolCreateView(LoginRequiredMixin, CreateView):
+class MeasurementProtocolCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = MeasurementProtocol
     form_class = MeasurementProtocolForm
     success_url = reverse_lazy('mp_list')
+    success_message = 'Measurement protocol created'
 
 
-class MeasurementProtocolUpdateView(LoginRequiredMixin, UpdateView):
+class MeasurementProtocolUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = MeasurementProtocol
     form_class = MeasurementProtocolForm
     success_url = reverse_lazy('mp_list')
+    success_message = 'Measurement protocol updated'
 
 
 class MeasurementProtocolDeleteView(DeleteView):
@@ -569,16 +598,18 @@ class MeasurementProtocolListView(LoginRequiredMixin, SingleTableMixin, FilterVi
 #=======================================
 # Measurement technique
 #=======================================
-class MeasurementTechniqueCreateView(LoginRequiredMixin, CreateView):
+class MeasurementTechniqueCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = MeasurementTechnique
     form_class = MeasurementTechniqueForm
     success_url = reverse_lazy('mt_list')
+    success_message = 'Measurement technique created'
 
 
-class MeasurementTechniqueUpdateView(LoginRequiredMixin, UpdateView):
+class MeasurementTechniqueUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = MeasurementTechnique
     form_class = MeasurementTechniqueForm
     success_url = reverse_lazy('mt_list')
+    success_message = 'Measurement technique updated'
 
 
 class MeasurementTechniqueDeleteView(DeleteView):
@@ -599,6 +630,21 @@ class MeasurementTechniqueAutocomplete(OntologyTermAutocomplete):
 
 
 
+from django.contrib import messages
+
+#
+# class SuccessMessageExtraMixin(SuccessMessageMixin):
+#     """
+#     Adds a success message on successful form submission.
+#     """
+#     extra_tags = ''
+#
+#     def form_valid(self, form):
+#         response = super(SuccessMessageMixin, self).form_valid(form)
+#         success_message = self.get_success_message(form.cleaned_data)
+#         if success_message:
+#             messages.success(self.request, success_message, self.extra_tags)
+#         return response
 
 
 
@@ -608,14 +654,15 @@ class MeasurementTechniqueAutocomplete(OntologyTermAutocomplete):
 ############################################################################################
 # Investigation views
 ############################################################################################
-class InvestigationCreateView(LoginRequiredMixin, CreateView):
+class InvestigationCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = Investigation
-    success_msg = "Investigation created"
+    success_message = 'Investigation created'
     success_url = reverse_lazy('ilist')
     fields = '__all__'
 
 
-class InvestigationUpdateView(LoginRequiredMixin, UpdateView):
+
+class InvestigationUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = Investigation
     success_msg = "Investigation updated"
     success_url = reverse_lazy('ilist')
@@ -727,16 +774,18 @@ class InvestigationListView(LoginRequiredMixin, SingleTableMixin, FilterView):
 ############################################################################################
 # Study views
 ############################################################################################
-class StudyCreateView(LoginRequiredMixin, CreateView):
+class StudyCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = Study
     success_url = reverse_lazy('ilist')
     form_class = StudyForm
+    success_message = 'Study created'
 
 
-class StudyUpdateView(LoginRequiredMixin, UpdateView):
+class StudyUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = Study
     success_url = reverse_lazy('ilist')
     form_class = StudyForm
+    success_message = 'Study updated'
 
 
 class StudyListView(LoginRequiredMixin, ListView):
@@ -757,16 +806,18 @@ class StudyAutocomplete(OntologyTermAutocomplete):
 ############################################################################################
 # Assay views
 ############################################################################################
-class AssayCreateView(LoginRequiredMixin, CreateView):
+class AssayCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = Assay
     success_url = reverse_lazy('ilist')
     fields = '__all__'
+    success_message = 'Assay created'
 
 
-class AssayUpdateView(LoginRequiredMixin, UpdateView):
+class AssayUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = Assay
     success_url = reverse_lazy('ilist')
     fields = '__all__'
+    success_message = 'Assay updated'
 
 
 class AssayListView(LoginRequiredMixin, ListView):
@@ -838,16 +889,18 @@ class AssayDeleteView(DeleteView):
 ############################################################################################
 # Study sample views
 ############################################################################################
-class StudySampleCreateView(LoginRequiredMixin, CreateView):
+class StudySampleCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     form_class = StudySampleForm
     model = StudySample
     success_url = reverse_lazy('ssam_list')
+    success_message = 'Study sample created'
 
 
-class StudySampleUpdateView(LoginRequiredMixin, UpdateView):
+class StudySampleUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     form_class = StudySampleForm
     model = StudySample
     success_url = reverse_lazy('ssam_list')
+    success_message = 'Study sample updated'
 
 
 class StudySampleDeleteView(DeleteView):
@@ -890,16 +943,18 @@ class StudySampleBatchCreate(LoginRequiredMixin, View):
 ############################################################################################
 # Study factor views
 ############################################################################################
-class StudyFactorCreateView(LoginRequiredMixin, CreateView):
+class StudyFactorCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = StudyFactor
     form_class = StudyFactorForm
     success_url = reverse_lazy('sflist')
+    success_message = 'Study factor created'
 
 
-class StudyFactorUpdateView(LoginRequiredMixin, UpdateView):
+class StudyFactorUpdateView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     model = StudyFactor
     form_class =  StudyFactorForm
     success_url = reverse_lazy('sflist')
+    success_message = 'Study factor updated'
 
 
 class StudyFactorDeleteView(DeleteView):

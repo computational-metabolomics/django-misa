@@ -155,7 +155,7 @@ urlpatterns = [
     url(r'^assaydetail_summary/(?P<assayid>\d+)$', views.AssayDetailSummaryView.as_view(), name='assaydetail_summary'),
 
 
-    url(r'^success/$', views.success, name='success'),
+    url(r'^misa_success/$', views.success, name='misa_success'),
     url(r'^adelete/(?P<pk>[\w]+)/$', views.AssayDeleteView.as_view(), name='adelete')
 
 ]
