@@ -323,7 +323,9 @@ class MetaboliteIdentificationProtocol(Protocol):
 
 
 class MetaboliteIdentificationProcess(models.Model):
-    metaboliteidentificationprotocol = models.ForeignKey(MetaboliteIdentificationProtocol, on_delete=models.CASCADE)
+    metaboliteidentificationprotocol = models.ForeignKey(MetaboliteIdentificationProtocol,
+                                                         on_delete=models.CASCADE,
+                                                         )
     details = models.CharField(max_length=300, null=True, blank=True)
 
 
@@ -338,7 +340,7 @@ class DataTransformationProcess(models.Model):
 
 
 class ExtractionProtocol(Protocol):
-    extractiontype = models.ForeignKey(ExtractionType, on_delete=models.CASCADE,
+    extractiontype = models.ForeignKey(ExtractionType, on_delete=models.CASCADE, blank=True, null=True,
                                        help_text=mark_safe("If a relevant term is not available, please "
                              " <a target='_blank' href='/misa/et_create/'>add</a>."))
     postextraction = models.CharField(max_length=300, null=True, blank=True)
@@ -353,7 +355,7 @@ class ExtractionProcess(models.Model):
 
 
 class ChromatographyProtocol(Protocol):
-    chromatographytype = models.ForeignKey(ChromatographyType, on_delete=models.CASCADE,
+    chromatographytype = models.ForeignKey(ChromatographyType, on_delete=models.CASCADE, blank = True,null=True,
                                            help_text=mark_safe("If a relevant term is not available, please "
                                                                " <a target='_blank' href='/misa/ct_create/'>add</a>.")
                                            )
@@ -370,7 +372,7 @@ class ChromatographyProcess(models.Model):
 
 
 class SpeProtocol(Protocol):
-    spetype = models.ForeignKey(SpeType, on_delete=models.CASCADE,
+    spetype = models.ForeignKey(SpeType, on_delete=models.CASCADE, blank=True, null=True,
                                 help_text=mark_safe("If a relevant term is not available, please "
                                                     " <a target='_blank' href='/misa/spet_create/'>add</a>.")
                                 )
@@ -384,7 +386,7 @@ class SpeProcess(models.Model):
 
 
 class MeasurementProtocol(Protocol):
-    measurementtechnique = models.ForeignKey(MeasurementTechnique, on_delete=models.CASCADE,
+    measurementtechnique = models.ForeignKey(MeasurementTechnique, on_delete=models.CASCADE, blank=True, null=True,
                                              help_text=mark_safe("If a relevant term is not available, please "
                                                                  " <a target='_blank' href='/misa/mt_create/'>add</a>.")
                                              )
