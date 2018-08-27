@@ -229,8 +229,8 @@ def upload_assay_data_files_dir(filelist, username, mapping_l, assayid, create_a
     mappingd = get_mapping_d(mapping_l, assayid=assayid, create_assay_details=create_assay_details)
 
     if celery_obj:
-        celery_obj.update_state(state='Mapping files to assay details',
-                      meta={'current': 99, 'total': 100})
+        celery_obj.update_state(state='RUNNING',
+                      meta={'current': 99, 'total': 100, 'status': 'Mapping files to assay details'})
 
     # then go through the mapping file and upload to relevant assay_run section adding replicates if present
     map_run_to_assaydetail(runs, mappingd)

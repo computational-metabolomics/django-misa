@@ -287,7 +287,7 @@ def validate_workflow_code(value):
 
 
 class Protocol(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=100)
     # protocoltype = models.ForeignKey(OntologyTerm, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
     uri = models.CharField(max_length=200, null=True, blank=True)
