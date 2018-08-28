@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 
-from __future__ import unicode_literals
+from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -70,31 +70,17 @@ class OrganismPart(models.Model):
 class Investigation(models.Model):
     name = models.CharField(max_length=200, unique=True, null=False, blank=False)
     description =  models.TextField(help_text='Investigation description')
+    slug = models.SlugField(unique=True, null=False, blank=False)
     # json_file = models.FileField(upload_to=json_file_upload, blank=True, null=True, max_length=1000)
 
     def __str__(self):              # __unicode__ on Python 2
         return self.name
 
+    def save(self,  *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super(Investigation, self).save(*args, **kwargs)
 
-    # def save(self, *args, **kwargs):
-        # read in JSON and update other things e.g. Study, Study Samples, Assay and Assay Details
-        # Create ISA files from json and save as zip in the investigation
-        # super(Investigation, self).save(*args, **kwargs)
-        #
-        # misa = isajson.load(self.json_file)
-        #
-        # for s in isa.studies:
-        #     study = Study(investigation=self)
-        #     study.save()
-        #     for samp in s.samples:
-        #         print samp
-        #         ss = StudySamples(study=study, sample_name=samp.name)
-        #         ss.save()
-        #     for a in s.assays:
-        #         aa = Assay(study=study)
-        #         aa.save()
-                # then create the assay files. Example json are not suitable at the moment though. Have to get example
-                # from David and also create a DMA based json to try out
 
 # Any general files that need to be associated with the investigation
 class MISAFile(GenericFile):
