@@ -74,8 +74,8 @@ class AssayFileTable(ColumnShiftTable):
 
     class Meta:
         model = MFile
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         fields = ('id','original_filename', 'data_file')
 
 
@@ -125,8 +125,8 @@ class AssayDetailTable(ColumnShiftTable):
 
     class Meta:
         model = AssayDetail
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         fields = ('id',)
 
 
@@ -201,8 +201,8 @@ class ISAFileSelectTable(ColumnShiftTable):
 
     class Meta:
         model = GenericFile
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
         fields = ('id',)
 
 
@@ -219,8 +219,8 @@ class ISAFileSelectTableWithCheckBox(ISAFileSelectTable):
 
     class Meta:
         model = GenericFile
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
         fields = ('id',)
 
     def get_column_default_show(self):
@@ -237,8 +237,8 @@ class InvestigationTable(ColumnShiftTable):
 
     class Meta:
         model = Investigation
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
         fields = ('id','name','description', 'details')
 
 
@@ -252,8 +252,8 @@ class AssayTable(tables.Table):
 
     class Meta:
         model = Assay
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         fields = ('id', 'name',)
 
 
@@ -265,8 +265,8 @@ class OntologyTermTable(ColumnShiftTable):
 
     class Meta:
         model = OntologyTerm
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
 
 
 class OntologyTermTableLocal(ColumnShiftTable):
@@ -286,8 +286,8 @@ class ExtractionProtocolTable(tables.Table):
     delete = tables.LinkColumn('ep_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = ExtractionProtocol
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
 
 
 class ExtractionTypeTable(tables.Table):
@@ -296,8 +296,8 @@ class ExtractionTypeTable(tables.Table):
     delete = tables.LinkColumn('et_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = ExtractionType
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         fields = ('id', 'type', 'description', 'all_ontologyterms')
 
 
@@ -308,7 +308,7 @@ class SpeProtocolTable(tables.Table):
     delete = tables.LinkColumn('spep_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = SpeProtocol
-        attrs = {'class': 'paleblue'}
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
         template = 'django_tables2/bootstrap.html'
 
 
@@ -318,8 +318,8 @@ class SpeTypeTable(tables.Table):
     delete = tables.LinkColumn('spet_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = SpeType
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         fields = ('id', 'type', 'description', 'all_ontologyterms')
 
 
@@ -330,7 +330,8 @@ class ChromatographyProtocolTable(tables.Table):
     delete = tables.LinkColumn('cp_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = ChromatographyProtocol
-        attrs = {'class': 'paleblue'}
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         template = 'django_tables2/bootstrap.html'
 
 
@@ -340,8 +341,8 @@ class ChromatographyTypeTable(tables.Table):
     delete = tables.LinkColumn('ct_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = ChromatographyType
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         fields = ('id', 'type', 'description', 'all_ontologyterms')
 
 
@@ -352,9 +353,7 @@ class MeasurementProtocolTable(tables.Table):
     delete = tables.LinkColumn('mp_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = MeasurementProtocol
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
-
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
 
 
 class MeasurementTechniqueTable(tables.Table):
@@ -363,8 +362,8 @@ class MeasurementTechniqueTable(tables.Table):
     delete = tables.LinkColumn('mt_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = MeasurementTechnique
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         fields = ('id', 'type', 'description', 'all_ontologyterms')
 
 
@@ -374,8 +373,7 @@ class SampleCollectionProtocolTable(tables.Table):
     delete = tables.LinkColumn('scp_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = SampleCollectionProtocol
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
 
 
 class DataTransformationProtocolTable(tables.Table):
@@ -384,8 +382,7 @@ class DataTransformationProtocolTable(tables.Table):
     delete = tables.LinkColumn('dtp_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = DataTransformationProtocol
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
 
 
 class MarkSafeLinkColumn(tables.LinkColumn):
@@ -412,8 +409,8 @@ class StudySampleTable(tables.Table):
 
     class Meta:
         model = StudySample
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
         fields = ('id', 'investigation', 'study', 'sample_name', 'all_studyfactors', 'organism', 'organism_part', 'update', 'delete')
 
 
@@ -423,8 +420,8 @@ class StudyFactorTable(tables.Table):
     delete = tables.LinkColumn('sfdelete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = StudyFactor
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
 
 
 
@@ -434,9 +431,7 @@ class OrganismTable(tables.Table):
     delete = tables.LinkColumn('org_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = Organism
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
-
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
 
 
 class OrganismPartTable(tables.Table):
@@ -445,6 +440,6 @@ class OrganismPartTable(tables.Table):
     delete = tables.LinkColumn('orgpart_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = OrganismPart
-        attrs = {'class': 'paleblue'}
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+
 
