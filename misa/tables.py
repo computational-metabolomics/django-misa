@@ -28,6 +28,8 @@ from django_tables2_column_shifter.tables import ColumnShiftTable
 from gfiles.models import GenericFile
 from django_tables2.utils import A
 
+TABLE_CLASS = "mogi table-bordered table-striped table-condensed table-hover"
+
 class AssayFileTable(ColumnShiftTable):
     study = tables.Column(accessor='run.assayrun.assaydetail.assay.study.name',
                                   verbose_name='Study')
@@ -74,7 +76,7 @@ class AssayFileTable(ColumnShiftTable):
 
     class Meta:
         model = MFile
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
         fields = ('id','original_filename', 'data_file')
 
@@ -125,7 +127,7 @@ class AssayDetailTable(ColumnShiftTable):
 
     class Meta:
         model = AssayDetail
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
         fields = ('id',)
 
@@ -202,7 +204,7 @@ class ISAFileSelectTable(ColumnShiftTable):
     class Meta:
         model = GenericFile
 
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
         fields = ('id',)
 
 
@@ -220,7 +222,7 @@ class ISAFileSelectTableWithCheckBox(ISAFileSelectTable):
     class Meta:
         model = GenericFile
 
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
         fields = ('id',)
 
     def get_column_default_show(self):
@@ -238,7 +240,7 @@ class InvestigationTable(ColumnShiftTable):
     class Meta:
         model = Investigation
 
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
         fields = ('id','name','description', 'details')
 
 
@@ -252,8 +254,7 @@ class AssayTable(tables.Table):
 
     class Meta:
         model = Assay
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
-
+        attrs = {"class": TABLE_CLASS}
         fields = ('id', 'name',)
 
 
@@ -265,7 +266,7 @@ class OntologyTermTable(ColumnShiftTable):
 
     class Meta:
         model = OntologyTerm
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
 
 
@@ -275,7 +276,7 @@ class OntologyTermTableLocal(ColumnShiftTable):
 
     class Meta:
         model = OntologyTerm
-        attrs = {'class': 'paleblue'}
+        attrs = {"class": TABLE_CLASS}
         template = 'django_tables2/bootstrap.html'
 
 
@@ -286,7 +287,7 @@ class ExtractionProtocolTable(tables.Table):
     delete = tables.LinkColumn('ep_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = ExtractionProtocol
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
 
 
@@ -296,8 +297,7 @@ class ExtractionTypeTable(tables.Table):
     delete = tables.LinkColumn('et_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = ExtractionType
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
-
+        attrs = {"class": TABLE_CLASS}
         fields = ('id', 'type', 'description', 'all_ontologyterms')
 
 
@@ -308,8 +308,8 @@ class SpeProtocolTable(tables.Table):
     delete = tables.LinkColumn('spep_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = SpeProtocol
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
-        template = 'django_tables2/bootstrap.html'
+        attrs = {"class": TABLE_CLASS}
+
 
 
 class SpeTypeTable(tables.Table):
@@ -318,8 +318,7 @@ class SpeTypeTable(tables.Table):
     delete = tables.LinkColumn('spet_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = SpeType
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
-
+        attrs = {"class": TABLE_CLASS}
         fields = ('id', 'type', 'description', 'all_ontologyterms')
 
 
@@ -330,8 +329,7 @@ class ChromatographyProtocolTable(tables.Table):
     delete = tables.LinkColumn('cp_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = ChromatographyProtocol
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
-
+        attrs = {"class": TABLE_CLASS}
         template = 'django_tables2/bootstrap.html'
 
 
@@ -341,8 +339,7 @@ class ChromatographyTypeTable(tables.Table):
     delete = tables.LinkColumn('ct_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = ChromatographyType
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
-
+        attrs = {"class": TABLE_CLASS}
         fields = ('id', 'type', 'description', 'all_ontologyterms')
 
 
@@ -353,7 +350,7 @@ class MeasurementProtocolTable(tables.Table):
     delete = tables.LinkColumn('mp_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = MeasurementProtocol
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
 
 class MeasurementTechniqueTable(tables.Table):
@@ -362,8 +359,7 @@ class MeasurementTechniqueTable(tables.Table):
     delete = tables.LinkColumn('mt_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = MeasurementTechnique
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
-
+        attrs = {"class": TABLE_CLASS}
         fields = ('id', 'type', 'description', 'all_ontologyterms')
 
 
@@ -373,7 +369,7 @@ class SampleCollectionProtocolTable(tables.Table):
     delete = tables.LinkColumn('scp_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = SampleCollectionProtocol
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
 
 class DataTransformationProtocolTable(tables.Table):
@@ -382,7 +378,7 @@ class DataTransformationProtocolTable(tables.Table):
     delete = tables.LinkColumn('dtp_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = DataTransformationProtocol
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
 
 class MarkSafeLinkColumn(tables.LinkColumn):
@@ -409,7 +405,7 @@ class StudySampleTable(tables.Table):
 
     class Meta:
         model = StudySample
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
         fields = ('id', 'investigation', 'study', 'sample_name', 'all_studyfactors', 'organism', 'organism_part', 'update', 'delete')
 
@@ -420,7 +416,7 @@ class StudyFactorTable(tables.Table):
     delete = tables.LinkColumn('sfdelete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = StudyFactor
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
 
 
@@ -431,7 +427,7 @@ class OrganismTable(tables.Table):
     delete = tables.LinkColumn('org_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = Organism
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
 
 class OrganismPartTable(tables.Table):
@@ -440,6 +436,6 @@ class OrganismPartTable(tables.Table):
     delete = tables.LinkColumn('orgpart_delete', text='delete', verbose_name='Delete', args=[A('id')])
     class Meta:
         model = OrganismPart
-        attrs = {"class": "table table-bordered table-striped table-condensed table-hover", }
+        attrs = {"class": TABLE_CLASS}
 
 

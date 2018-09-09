@@ -122,10 +122,10 @@ from misa.filter import (
 
 from django.shortcuts import redirect
 
+TABLE_CLASS = "mogi table-bordered table-striped table-condensed table-hover"
+
 def success(request):
     return render(request, 'misa/success.html')
-
-
 
 ############################################################################################
 # Export json
@@ -719,13 +719,15 @@ class InvestigationDetailTablesView(LoginRequiredMixin, View):
             # Create an invidivual filter for each table (assays)
             af = AssayFilter(request.GET, queryset=assays, prefix=c)
 
-            atable = AssayTable(af.qs, prefix=c, attrs={'name': assay_track, 'id': assay_track, 'class': "table table-bordered table-striped table-condensed table-hover"})
+            atable = AssayTable(af.qs, prefix=c, attrs={'name': assay_track, 'id': assay_track,
+                                                        'class': TABLE_CLASS})
             # load the table into the requestconfig
             rc.configure(atable)
 
             # Create an invidivual filter for each table (samples)
             sf = StudySampleFilter(request.GET, queryset=s.studysample_set.all(), prefix=c+1)
-            stable = StudySampleTable(sf.qs, prefix=c, attrs={'name': sample_track, 'id': sample_track, 'class': "table table-bordered table-striped table-condensed table-hover"})
+            stable = StudySampleTable(sf.qs, prefix=c, attrs={'name': sample_track, 'id': sample_track,
+                                                              'class': TABLE_CLASS})
             # load the table into the requestconfig
             rc.configure(stable)
 
