@@ -854,7 +854,7 @@ class UploadAssayDataFilesView(LoginRequiredMixin, View):
 
             if data_zipfile:
                 upload_assay_data_files_zip(assayid, data_zipfile,  form.mapping_l, request.user, create_assay_details)
-                return render(request, 'misa/investigation_list.html')
+                return redirect('ilist')
             else:
                 save_as_link = form.cleaned_data['save_as_link']
                 # recursive = form.cleaned_data['recursive']

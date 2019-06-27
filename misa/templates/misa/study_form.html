@@ -12,7 +12,6 @@
 {% block sb_admin_breadcrumb %}
     <a href="{% url "index" %}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
     / <a href="{% url "ilist" %}"></i> ISA Summary </a>
-</form>
 
 {% endblock sb_admin_breadcrumb %}
 
@@ -29,7 +28,6 @@
 
 
 {% block sb_admin_custom_js %}
-    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>#}
+    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
     {{ form.media }}
-
 {% endblock sb_admin_custom_js %}
